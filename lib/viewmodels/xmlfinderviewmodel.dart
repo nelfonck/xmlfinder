@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:xml/xml.dart';
 
 import 'package:comprassj/models/correofactura.dart';
 import 'package:flutter/material.dart';
 import 'package:enough_mail/enough_mail.dart';
-
 
 class Xmlfinderviewmodel extends ChangeNotifier{
   ImapClient? client;
@@ -115,6 +115,12 @@ class Xmlfinderviewmodel extends ChangeNotifier{
             continue;
           }  
 
+          final extension = nombreArchivo.split('.').last.toLowerCase();
+
+          if (extension != 'xml') {
+            continue;
+          }
+
           final mimeText = part.mimeData.toString();
 
           final indice = mimeText.indexOf('\r\n\r\n');
@@ -131,9 +137,30 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
           final bytes = base64.decode(contenidoBase64);
 
-          String nombreArchivoSalida =  '${correo.consecutivoFacturacion}.${nombreArchivo.split('.').last.toLowerCase()}';
+          //leer el xml
+          final xmlString = utf8.decode(bytes);
 
-          await File(nombreArchivoSalida).writeAsBytes(bytes);
+          final document = XmlDocument.parse(xmlString);
+
+          //obtener el nombre comercial
+          final nombreComercial = document
+              .findAllElements('NombreComercial')
+              .firstOrNull
+              ?.innerText;
+
+          //Crear carpeta con ese nombre comercial
+          final carpeta = Directory(nombreComercial!);
+
+
+          if (!await carpeta.exists()) {
+            await carpeta.create(recursive: true);
+          }
+          String nombreArchivoSalida =  '${correo.consecutivoFacturacion}.$extension';
+
+          //definir la ruta completa del archivo
+          final rutaArchivo ='${carpeta.path}/$nombreArchivoSalida';
+
+          await File(rutaArchivo).writeAsBytes(bytes);
 
         } 
       } 
