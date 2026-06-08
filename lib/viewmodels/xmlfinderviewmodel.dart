@@ -20,8 +20,8 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     );
 
     await client?.login(
-      'nelfonck@gmail.com',
-      'knbbwngizwuqbzjb',
+      'facturas.lacasadelascarnes1@gmail.com',
+      'wozfxmekrkysjrqf',
     );
 
     client?.isLogEnabled = false;
@@ -37,7 +37,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
 
     final busqueda = await client.searchMessages(
-      searchCriteria: 'TEXT "%$consecutivo%"',
+      searchCriteria: 'TEXT "$consecutivo"',
     );
 
     if (busqueda.matchingSequence!.isEmpty){
@@ -99,13 +99,17 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     CorreoFactura correo,
   ) async {
     for (final mensaje in correo.mimeMessages!) {
+      
       for (final part in mensaje.parts ?? <MimePart>[]) {
 
           final nombreArchivo = _obtenerNombreArchivo(part);
 
+          
           if (nombreArchivo == null) {
             continue;
           }
+
+          print(nombreArchivo);
 
           if (!nombreArchivo.contains(correo.consecutivoFacturacion!)) {
             continue;
@@ -120,6 +124,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
           if (extension != 'xml') {
             continue;
           }
+
 
           final mimeText = part.mimeData.toString();
 
@@ -159,7 +164,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
           //definir la ruta completa del archivo
           final rutaArchivo ='${carpeta.path}/$nombreArchivoSalida';
-
+          
           await File(rutaArchivo).writeAsBytes(bytes);
 
         } 
