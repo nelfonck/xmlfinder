@@ -9,7 +9,7 @@ class XmlFinderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController txtController = TextEditingController(text: '00100004010000033692');
+    TextEditingController txtController = TextEditingController(text: '40500249010000048907');
 
     return ChangeNotifierProvider(
       create: (_) => Xmlfinderviewmodel(),
@@ -59,9 +59,18 @@ class XmlFinderView extends StatelessWidget {
                 }, 
                 child: const Text('Conectar')
               ),
+              TextButton(
+                onPressed: () async {
+                  await model.cargarFacturas();
+                }, 
+                child: const Text('Cargar facturas')
+              ),
               SizedBox(
                 width: 300,
                 child: TextField(
+                  onChanged: (value){
+                    model.encontrarFacturas(value);
+                  },
                   controller: txtController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -70,21 +79,21 @@ class XmlFinderView extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: () async {
-                  await model.buscarFactura(model.client!, txtController.text);
+                onPressed: () {
+                   model.encontrarFacturas(txtController.text);
                 }, 
-                child: const Text('Probar adjuntos')
+                child: const Text('Encontrar factura')
               ),
               Expanded(
                 
-                child:  model.correos.isEmpty ?
+                child:  model.correosBusqueda.isEmpty ?
                 Center(
                   child: const Text('No hay datos para mostrar'),
                 ):
                 ListView.builder(
-                  itemCount: model.correos.length,
+                  itemCount: model.correosBusqueda.length,
                   itemBuilder: (context, index) {
-                    final correo = model.correos[index];
+                    final correo = model.correosBusqueda[index];
                 
                     return Card(
                       child: ListTile(
@@ -94,14 +103,14 @@ class XmlFinderView extends StatelessWidget {
                           children: [
                             Text(correo.remitente ?? ''),
                             Text(correo.fecha?.toString() ?? ''),
-                            Text(correo.adjuntos.join(', ')),
+                            Text(correo.fileNames!.join(', ')),
                           ],
                         ),
                         onTap: () {
                         },
                         trailing: IconButton(
                           onPressed: ()async{
-                            await model.descargarAdjuntos(model.client!, model.correos[index]);
+                            //await model.descargarAdjuntos(model.client!, model.correos[index]);
                           }, 
                           icon: const Icon(Icons.download),
                         ),
@@ -109,7 +118,8 @@ class XmlFinderView extends StatelessWidget {
                     );
                   },
                 ),
-              )
+              ),
+              !model.obteniendoMensajes ? Container() : LinearProgressIndicator()
             ],
           ),
         ),
