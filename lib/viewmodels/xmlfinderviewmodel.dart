@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:xml/xml.dart';
 
 import 'package:comprassj/models/correofactura.dart';
@@ -41,7 +42,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     obteniendoMensajes = true;
     notifyListeners();
     final resultado = await client?.fetchRecentMessages(
-      messageCount: 500,
+      messageCount: 100,
       criteria: 'BODY.PEEK[]',
     );
 
@@ -76,6 +77,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
         ),
       );  
     }
+    correosBusqueda = correos;
     obteniendoMensajes = false;
     notifyListeners();
 
@@ -91,90 +93,40 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     notifyListeners();
   }
 
-  /*Future<void> buscarFactura(
-    ImapClient client,
-    String consecutivo
+  Future<void> descargarAdjuntos(
+    CorreoFactura correo,
   ) async {
-
-    correos.clear();
-    notifyListeners();
-
-    await client.selectInbox();
-
-    obteniendoMensajes = true;
-    notifyListeners();
-    final resultado = await client.fetchRecentMessages(
-      messageCount: 500,
-      criteria: 'BODY.PEEK[]',
+    print('UID: ${correo.uid}');
+    final resultado = await client?.uidFetchMessage(
+      correo.uid, // UID
+      'FLAGS BODY[]',
     );
-    obteniendoMensajes = false;
-    notifyListeners();
 
-    for (final mensaje in resultado.messages.reversed) {
-     
-      if (!mensaje.hasAttachments()) {
-        continue;
-      }
-
-      mensaje.parse();
-
-      final adjuntos = <String>[];
-      final mimeMessages = <MimeMessage>[];
-
-      for (final info in mensaje.findContentInfo()) {
-
-        final nombre = info.fileName ?? '';
-
-        if (nombre.contains(consecutivo)) {
-
-          adjuntos.add(nombre);
-          mimeMessages.add(mensaje);
-        }
-      }
-
-      if (adjuntos.isEmpty) {
-        continue;
-      }
-      correos.add(
-        CorreoFactura(
-          uid: mensaje.uid ?? 0,
-          asunto: mensaje.decodeSubject() ?? '',
-          remitente: mensaje.from?.firstOrNull?.email,
-          fecha: mensaje.decodeDate(),
-        ),
-      );
-      notifyListeners();
+    if (resultado?.messages == null || resultado!.messages.isEmpty) {
+      print('No se encontró el mensaje');
       return;
     }
 
-  }*/
-
-
-  /*Future<void> descargarAdjuntos(
-    ImapClient client,
-    CorreoFactura correo,
-  ) async {
-    for (final mensaje in correo.mimeMessages!) {
-
+    final mensaje = resultado?.messages.first;
+      
       //crear carpeta con el nombre comercial de la factura, antes de guardar los archivos
       //Crear carpeta con ese nombre comercial
-      final String? nombreComercial = await getNombreComercial(mensaje, correo.consecutivoFacturacion!);
+      final Map<String,dynamic>? params = await getNombreComercial(mensaje);
+      final String? nombreComercial = params?['nombre_comercial'];
+      final String? numeroConsecutivo = params?['numero_consecutivo'];
+
       final carpeta = Directory(nombreComercial!);
 
       if (!await carpeta.exists()) {
         await carpeta.create(recursive: true);
       }
       
-      for (final part in mensaje.parts ?? <MimePart>[]) {
+      for (final part in mensaje?.parts ?? <MimePart>[]) {
 
           final nombreArchivo = obtenerNombreArchivo(part);
 
           
           if (nombreArchivo == null) {
-            continue;
-          }
-
-          if (!nombreArchivo.contains(correo.consecutivoFacturacion!)) {
             continue;
           }
 
@@ -206,9 +158,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
           final bytes = base64.decode(contenidoBase64);
 
 
-
-
-          String nombreArchivoSalida =  '${correo.consecutivoFacturacion}.$extension';
+          String nombreArchivoSalida =  '$numeroConsecutivo.$extension';
 
           //definir la ruta completa del archivo
           final rutaArchivo ='${carpeta.path}/$nombreArchivoSalida';
@@ -216,8 +166,8 @@ class Xmlfinderviewmodel extends ChangeNotifier{
           await File(rutaArchivo).writeAsBytes(bytes);
 
         } 
-      } 
-  }*/
+
+  }
 
   String? obtenerNombreArchivo(MimePart part) {
     for (final header in part.headers ?? []) {
@@ -236,17 +186,13 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     return null;
   }
 
-  Future<String?> getNombreComercial(MimeMessage mensaje, String consecutivoFacturacion)async{
-      for (final part in mensaje.parts ?? <MimePart>[]) {
+  Future<Map<String,dynamic>?> getNombreComercial(MimeMessage? mensaje)async{
+      for (final part in mensaje?.parts ?? <MimePart>[]) {
 
           final nombreArchivo = obtenerNombreArchivo(part);
 
           
           if (nombreArchivo == null) {
-            continue;
-          }
-
-          if (!nombreArchivo.contains(consecutivoFacturacion)) {
             continue;
           }
 
@@ -277,6 +223,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
           final bytes = base64.decode(contenidoBase64);
 
+
           //leer el xml
           final xmlString = utf8.decode(bytes);
 
@@ -288,7 +235,18 @@ class Xmlfinderviewmodel extends ChangeNotifier{
               .firstOrNull
               ?.innerText;
 
-          return nombreComercial;
+          //obtener el nombre comercial
+          final numeroConsecutivo = document
+              .findAllElements('NumeroConsecutivo')
+              .firstOrNull
+              ?.innerText;
+
+          final params = {
+            'nombre_comercial': nombreComercial,
+            'numero_consecutivo': numeroConsecutivo
+          };
+
+          return params;
 
         } 
         

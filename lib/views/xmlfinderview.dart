@@ -37,7 +37,9 @@ class XmlFinderView extends StatelessWidget {
               menuButton(
                 icon: Icons.file_download, 
                 text: 'Descargas xml', 
-                onPressed: () {},
+                onPressed: () {
+  
+                },
               ),
               reportesButton(
                 onProveedor: (){},
@@ -110,7 +112,7 @@ class XmlFinderView extends StatelessWidget {
                         },
                         trailing: IconButton(
                           onPressed: ()async{
-                            //await model.descargarAdjuntos(model.client!, model.correos[index]);
+                            await model.descargarAdjuntos(model.correos[index]);
                           }, 
                           icon: const Icon(Icons.download),
                         ),
