@@ -43,7 +43,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     notifyListeners();
     final resultado = await client?.fetchRecentMessages(
       messageCount: 100,
-      criteria: 'BODY.PEEK[]',
+      criteria: '(UID BODY.PEEK[])',
     );
 
     for (final mensaje in resultado!.messages.reversed) {
@@ -96,32 +96,34 @@ class Xmlfinderviewmodel extends ChangeNotifier{
   Future<void> descargarAdjuntos(
     CorreoFactura correo,
   ) async {
-    print('UID: ${correo.uid}');
+
     final resultado = await client?.uidFetchMessage(
       correo.uid, // UID
-      'FLAGS BODY[]',
+      '(UID BODY.PEEK[])',
     );
 
     if (resultado?.messages == null || resultado!.messages.isEmpty) {
-      print('No se encontró el mensaje');
       return;
     }
+    final mensaje = resultado.messages.first;
 
-    final mensaje = resultado?.messages.first;
-      
       //crear carpeta con el nombre comercial de la factura, antes de guardar los archivos
       //Crear carpeta con ese nombre comercial
       final Map<String,dynamic>? params = await getNombreComercial(mensaje);
       final String? nombreComercial = params?['nombre_comercial'];
       final String? numeroConsecutivo = params?['numero_consecutivo'];
+      
+      if (nombreComercial==null){
+        return;
+      }
 
-      final carpeta = Directory(nombreComercial!);
+      final carpeta = Directory(nombreComercial);
 
       if (!await carpeta.exists()) {
         await carpeta.create(recursive: true);
       }
       
-      for (final part in mensaje?.parts ?? <MimePart>[]) {
+      for (final part in mensaje.parts ?? <MimePart>[]) {
 
           final nombreArchivo = obtenerNombreArchivo(part);
 
@@ -130,16 +132,16 @@ class Xmlfinderviewmodel extends ChangeNotifier{
             continue;
           }
 
-          if (nombreArchivo.contains('r') || nombreArchivo.contains('R') || nombreArchivo.contains('M') || nombreArchivo.contains('H')) {
+          if (!validarNombreArchivo(nombreArchivo)) {
             continue;
           }  
 
+
           final extension = nombreArchivo.split('.').last.toLowerCase();
 
-          if (extension != 'xml') {
+          if (!['xml', 'pdf'].contains(extension)) {
             continue;
           }
-
 
           final mimeText = part.mimeData.toString();
 
@@ -157,8 +159,9 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
           final bytes = base64.decode(contenidoBase64);
 
+          String prefix = nombreArchivo.toLowerCase().contains('nc') ? 'NC-' : '' ;
 
-          String nombreArchivoSalida =  '$numeroConsecutivo.$extension';
+          String nombreArchivoSalida =   '$prefix$numeroConsecutivo.$extension';
 
           //definir la ruta completa del archivo
           final rutaArchivo ='${carpeta.path}/$nombreArchivoSalida';
@@ -191,12 +194,11 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
           final nombreArchivo = obtenerNombreArchivo(part);
 
-          
           if (nombreArchivo == null) {
             continue;
           }
 
-          if (nombreArchivo.contains('r') || nombreArchivo.contains('R') || nombreArchivo.contains('M') || nombreArchivo.contains('H')) {
+          if (!validarNombreArchivo(nombreArchivo)) {
             continue;
           }  
 
@@ -251,6 +253,22 @@ class Xmlfinderviewmodel extends ChangeNotifier{
         } 
         
     return null;
+  }
+
+  bool validarNombreArchivo(String nombre){
+    if (
+      nombre.toLowerCase().contains('resp') || 
+      nombre.toLowerCase().contains('hacienda') ||
+      //nombre.toLowerCase().contains('nc') ||
+      nombre.toLowerCase().contains('dgt') ||
+      nombre.toLowerCase().contains('ahc') ||
+      nombre.toLowerCase().endsWith('r.xml') ||
+      nombre.toLowerCase().contains('mh') ||
+      nombre.toLowerCase().contains('nota') 
+    ){
+      return false;
+    }
+    return true;
   }
 
 }

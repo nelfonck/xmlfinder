@@ -1,4 +1,5 @@
 import 'package:comprassj/viewmodels/xmlfinderviewmodel.dart';
+import 'package:comprassj/widgets/fondodegradado.dart';
 import 'package:comprassj/widgets/menubutton.dart';
 import 'package:comprassj/widgets/popmenubutton.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class XmlFinderView extends StatelessWidget {
       child: Consumer<Xmlfinderviewmodel>(
         builder: (context, model, child) => Scaffold(
           appBar: AppBar(
+            flexibleSpace: FondoDegradado(),
             title: const Text('Descargas de facturas xml'),
             elevation: 0,
             actions: [
@@ -49,7 +51,9 @@ class XmlFinderView extends StatelessWidget {
               menuButton(
                 icon: Icons.settings,
                 text: 'Configuracion',
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, 'configuracion');
+                },
               ),
             ],
           ),
@@ -112,7 +116,7 @@ class XmlFinderView extends StatelessWidget {
                         },
                         trailing: IconButton(
                           onPressed: ()async{
-                            await model.descargarAdjuntos(model.correos[index]);
+                            await model.descargarAdjuntos(model.correosBusqueda[index]);
                           }, 
                           icon: const Icon(Icons.download),
                         ),

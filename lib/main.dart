@@ -1,3 +1,4 @@
+import 'package:comprassj/views/configuracionview.dart';
 import 'package:comprassj/views/xmlfinderview.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         brightness: Brightness.dark,
 
+        colorScheme: const ColorScheme.dark(
+          primary: Colors.blue,
+        ),
+        
         scaffoldBackgroundColor: const Color(0xFF4B4F54),
 
         appBarTheme: const AppBarTheme(
@@ -28,7 +33,23 @@ class MyApp extends StatelessWidget {
         cardTheme: CardThemeData(
           color: const Color(0xFF5A5F66),
         ),
+
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.blue,
+            side: const BorderSide(
+              color: Colors.blue,
+              width: 0.5,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
       ),
+      routes: {
+        'configuracion': (context) => const ConfiguracionView(),
+      },
       home: const XmlFinderView(),
     );
   }
