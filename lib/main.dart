@@ -1,4 +1,5 @@
 import 'package:comprassj/views/configuracionview.dart';
+import 'package:comprassj/views/nuevarazonsocialview.dart';
 import 'package:comprassj/views/xmlfinderview.dart';
 import 'package:flutter/material.dart';
 
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         'configuracion': (context) => const ConfiguracionView(),
+        'razon_social': (context) => const NuevaRazonSocialView(),
       },
       home: const XmlFinderView(),
     );
