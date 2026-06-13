@@ -1,9 +1,12 @@
+import 'package:comprassj/services/preferencias.dart';
 import 'package:comprassj/views/configuracionview.dart';
 import 'package:comprassj/views/nuevarazonsocialview.dart';
 import 'package:comprassj/views/xmlfinderview.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Preferencias.init();
   runApp(const MyApp());
 }
 

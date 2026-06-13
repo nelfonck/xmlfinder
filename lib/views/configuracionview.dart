@@ -45,11 +45,11 @@ class ConfiguracionView extends StatelessWidget {
                       onChanged: (value){
                         
                       },
-                      controller: model.txtBaseUrlController,
+                      controller: model.txtHostController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        hintText: 'Base url',
-                        labelText: 'Base url'
+                        hintText: 'Host',
+                        labelText: 'Port'
                       ),
                     ),
                     SizedBox(

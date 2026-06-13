@@ -5,6 +5,9 @@ class NuevaRazonSocialViewModel extends ChangeNotifier{
   TextEditingController identificacionController = TextEditingController();
   TextEditingController razonSocialController = TextEditingController();
   TextEditingController nombreComercialController = TextEditingController();
+  TextEditingController correoController = TextEditingController();
+  TextEditingController telefonoController = TextEditingController();
+  bool activo = true;
 
   final tiposIdentificacion = {
     '01': 'Cédula Física',
@@ -15,5 +18,10 @@ class NuevaRazonSocialViewModel extends ChangeNotifier{
   };
 
   String? tipoSeleccionado;
+
+  void setActivo(bool value){
+    activo = value;
+    notifyListeners();
+  }
 
 }

@@ -28,6 +28,21 @@ class NuevaRazonSocialView extends StatelessWidget {
                 children: [
                   Row(
                     children: [
+                      const Spacer(),
+                      Text(model.activo ? 'Activo' : 'Inactivo'),
+                      Switch(
+                        value: model.activo, 
+                        onChanged: ((value) {
+                          model.setActivo(value);
+                        }
+                      )),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    children: [
                       Expanded(
                         child: TextField(
                           onChanged: (value){
@@ -80,6 +95,32 @@ class NuevaRazonSocialView extends StatelessWidget {
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Nombre comercial'
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextField(
+                    onChanged: (value){
+                      
+                    },
+                    controller: model.correoController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Correo'
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextField(
+                    onChanged: (value){
+                      
+                    },
+                    controller: model.telefonoController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Telefono'
                     ),
                   ),
                   SizedBox(
