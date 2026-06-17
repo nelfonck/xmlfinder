@@ -31,7 +31,9 @@ class XmlFinderView extends StatelessWidget {
               menuButton(
                 icon: Icons.store, 
                 text: 'Tiendas', 
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, 'nueva_tienda');
+                },
               ),
               menuButton(
                 icon: Icons.local_shipping, 

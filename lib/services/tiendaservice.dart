@@ -1,15 +1,14 @@
 import 'dart:convert';
 
-import 'package:comprassj/models/razonsocial';
+import 'package:comprassj/models/tienda.dart';
 import 'package:comprassj/services/preferencias.dart';
 import 'package:http/http.dart' as http;
 
-class RazonSocialService {
-
-
-  Future<List<RazonSocial>> getRazonesSociales()async{
+class TiendaService{
+  
+  Future<List<Tienda>> getTiendas()async{
     try {
-      final url = Uri.http(Preferencias.baseUrl, '/comprassjapi/public/api/razones-sociales');
+      final url = Uri.http(Preferencias.baseUrl, '/comprassjapi/public/api/tiendas');
 
       final resp = await http.get(
         url,
@@ -25,16 +24,16 @@ class RazonSocialService {
       }
 
       final  decoded = body['data'];
-      return decoded.map<RazonSocial>((e) => RazonSocial.fromJson(e)).toList(); 
+      return decoded.map<Tienda>((e) => Tienda.fromJson(e)).toList(); 
 
     } catch (e) {
       throw Exception(e.toString());
     }
   }
 
-  Future<RazonSocial> guardarRazonSocial(Map<String,dynamic> params)async{
+  Future<Tienda> guardarTienda(Map<String,dynamic> params)async{
     try {
-      final url = Uri.http(Preferencias.baseUrl, '/comprassjapi/public/api/guardar-razon-social');
+      final url = Uri.http(Preferencias.baseUrl, '/comprassjapi/public/api/guardar-tienda');
 
       final resp = await http.post(
         url,
@@ -51,11 +50,10 @@ class RazonSocialService {
       }
 
       final  decoded = body['data'];
-      return RazonSocial.fromJson(decoded);
+      return Tienda.fromJson(decoded);
 
     } catch (e) {
       throw Exception(e.toString());
     }
   }
-
 }

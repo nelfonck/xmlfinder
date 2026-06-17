@@ -1,11 +1,16 @@
 import 'package:comprassj/models/razonsocial';
+import 'package:comprassj/services/razonsocialservice.dart';
 
 class RazonSocialRepository {
-  final RazonSocialRepository  _service ;
+  final RazonSocialService  _service ;
   RazonSocialRepository(this._service) ;
 
   Future<List<RazonSocial>> getRazonesSociales() async {
     return _service.getRazonesSociales();
+  }
+
+  Future<RazonSocial> guardarRazonSocial(Map<String,dynamic> params) async {
+    return _service.guardarRazonSocial(params);
   }
 
 

@@ -49,7 +49,7 @@ class ConfiguracionView extends StatelessWidget {
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'Host',
-                        labelText: 'Port'
+                        labelText: 'Host'
                       ),
                     ),
                     SizedBox(

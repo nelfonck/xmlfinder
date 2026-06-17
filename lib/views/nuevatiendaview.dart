@@ -1,20 +1,20 @@
-import 'package:comprassj/helpers/mensajes.dart';
-import 'package:comprassj/viewmodels/razonsocialviewmodel.dart';
-import 'package:comprassj/widgets/fondodegradado.dart';
+import 'package:comprassj/viewmodels/tiendaviewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:comprassj/helpers/mensajes.dart';
+import 'package:comprassj/widgets/fondodegradado.dart';
 import 'package:provider/provider.dart';
 
-class NuevaRazonSocialView extends StatelessWidget {
-  const NuevaRazonSocialView({super.key});
+class NuevaTiendaView extends StatelessWidget {
+  const NuevaTiendaView({super.key});
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => NuevaRazonSocialViewModel(),
-      child: Consumer<NuevaRazonSocialViewModel>(
+      create: (_) => TiendaViewModel(),
+      child: Consumer<TiendaViewModel>(
         builder: ((context, model, child) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Nueva razon social'),
+              title: const Text('Nuevo punto de venta'),
               flexibleSpace: FondoDegradado(),
               actions: [
                 IconButton(
@@ -28,10 +28,10 @@ class NuevaRazonSocialView extends StatelessWidget {
                   onPressed: ()async{
                     try {
 
-                      await model.guardarRazonSocial();
+                      await model.guardarTienda();
 
                       if (context.mounted){
-                        Mensajes.exito(context, 'Razón social guardada correctamente');
+                        Mensajes.exito(context, 'Tienda guardada correctamente');
                       }
 
                     } catch (e) {
@@ -51,7 +51,7 @@ class NuevaRazonSocialView extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  SizedBox(height: 20,),
+                  SizedBox(height: 30,),
                   Row(
                     children: [
                       Expanded(
@@ -59,28 +59,14 @@ class NuevaRazonSocialView extends StatelessWidget {
                           onChanged: (value){
                             
                           },
-                          controller: model.identificacionController,
-                          focusNode: model.identificacionFocusNode,
+                          controller: model.nombreController,
+                          focusNode: model.nombreFocusNode,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: 'Identificacion'
+                            labelText: 'Nombre'
                           ),
                         ),
                       ),
-                      SizedBox(width: 20,),
-                      DropdownMenu<String>(
-                        label: const Text('Tipo de identificación'),
-                        dropdownMenuEntries: model.tiposIdentificacion.entries
-                          .map( 
-                            (entry) => DropdownMenuEntry<String>(
-                              value: entry.key,
-                              label: entry.value,
-                            )
-                          ).toList(),
-                        onSelected: (value) {
-                          model.tipoSeleccionado = value;
-                        },
-                      )
                     ],
                   ),
                   SizedBox(
@@ -90,10 +76,10 @@ class NuevaRazonSocialView extends StatelessWidget {
                     onChanged: (value){
                       
                     },
-                    controller: model.razonSocialController,
+                    controller: model.telefonoController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Razon social'
+                      labelText: 'Telefono'
                     ),
                   ),
                   SizedBox(
@@ -103,10 +89,10 @@ class NuevaRazonSocialView extends StatelessWidget {
                     onChanged: (value){
                       
                     },
-                    controller: model.nombreComercialController,
+                    controller: model.direccionController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Nombre comercial'
+                      labelText: 'Direccion'
                     ),
                   ),
                   SizedBox(
@@ -126,18 +112,26 @@ class NuevaRazonSocialView extends StatelessWidget {
                     height: 15,
                   ),
                   TextField(
-                    onChanged: (value){
-                      
-                    },
-                    controller: model.telefonoController,
+                    controller: model.claveCorreoController,
+                    obscureText: !model.mostrandoClave,
                     decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Telefono'
+                      border: const OutlineInputBorder(),
+                      labelText: 'Clave correo',
+                      prefixIcon: const Icon(Icons.lock),
+                      suffixIcon: GestureDetector(
+                        onTapDown: (_) {
+                          model.mostrarClave(true);
+                        },
+                        onTapUp: (_) {
+                          model.mostrarClave(false);
+                        },
+                        onTapCancel: () {
+                          model.mostrarClave(false);
+                        },
+                        child: const Icon(Icons.visibility),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
+                  )
                 ],
               ),
             ),

@@ -3,6 +3,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Preferencias {
   static SharedPreferences? _prefs;
 
+  static const Map<String,String> headers = {
+    'Authorization':'Bearer DuheFwIAohGVp6hwWEDWwChvi6j4SJt7',
+    'Content-Type': 'application/json'
+  };
+
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
   }
