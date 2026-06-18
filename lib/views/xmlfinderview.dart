@@ -1,3 +1,4 @@
+import 'package:comprassj/helpers/mensajes.dart';
 import 'package:comprassj/viewmodels/xmlfinderviewmodel.dart';
 import 'package:comprassj/widgets/fondodegradado.dart';
 import 'package:comprassj/widgets/menubutton.dart';
@@ -13,7 +14,14 @@ class XmlFinderView extends StatelessWidget {
     TextEditingController txtController = TextEditingController(text: '40500249010000048907');
 
     return ChangeNotifierProvider(
-      create: (_) => Xmlfinderviewmodel(),
+      create: (_) => Xmlfinderviewmodel()
+      ..cargarTiendas(context).onError((error, stackTrace){
+        WidgetsBinding.instance.addPostFrameCallback((_){
+          if (context.mounted){
+            Mensajes.error(context, error.toString());
+          }
+        });
+      }),
       child: Consumer<Xmlfinderviewmodel>(
         builder: (context, model, child) => Scaffold(
           appBar: AppBar(
@@ -63,6 +71,47 @@ class XmlFinderView extends StatelessWidget {
           ),
           body: Column(
             children: [
+              SizedBox(
+                height: 100,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: model.tiendas.length,
+                  itemBuilder: (context, index){
+                    final seleccionada = model.tiendaSeleccionada == index;
+                    return GestureDetector(
+                      onTap: () {
+                        model.seleccionarTienda(index);
+                      },
+                      child: Container(
+                        width: 90,
+                        height: 90,
+                        margin: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: seleccionada ? Colors.blue : Colors.transparent,
+                          border: Border.all(
+                            color: seleccionada ? Colors.transparent : Colors.blue,
+                            width: 2,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            model.tiendas[index].nombre,
+                            textAlign: TextAlign.center,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: seleccionada ? Colors.white : Colors.blue,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                ),
+              ),
+              Divider(),
               TextButton(
                 onPressed: () async {
                   await model.conectar();

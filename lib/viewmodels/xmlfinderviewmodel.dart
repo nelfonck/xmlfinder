@@ -1,5 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:comprassj/models/tienda.dart';
+import 'package:comprassj/repositories/tiendarepository.dart';
+import 'package:comprassj/services/preferencias.dart';
+import 'package:comprassj/services/tiendaservice.dart';
 import 'package:xml/xml.dart';
 
 import 'package:comprassj/models/correofactura.dart';
@@ -13,10 +17,11 @@ class Xmlfinderviewmodel extends ChangeNotifier{
   List<CorreoFactura> correos = [];
   List<CorreoFactura> correosBusqueda = [];
   bool obteniendoMensajes = false;
+  List<Tienda> tiendas = [];
+  bool _disposed = false;
+  int? tiendaSeleccionada;
 
-  //dos pinos 40500249010000048907
-  //tres jotas 00100031010000036714\\
-
+  final Tiendarepository _repository = Tiendarepository(TiendaService());
 
   Future<void> conectar() async {
     client = ImapClient(isLogEnabled: true);
@@ -269,6 +274,39 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       return false;
     }
     return true;
+  }
+
+  Future<void> cargarTiendas(BuildContext context) async{
+    if (!configuracionLista()){
+      Navigator.pushNamed(context, 'configuracion');
+      return;
+    }
+    tiendas = await _repository.getTiendas();
+    safeNotifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  void safeNotifyListeners() {
+    if (!_disposed) {
+      notifyListeners();
+    }
+  }
+
+  bool configuracionLista(){
+    if (Preferencias.host.isNotEmpty && Preferencias.port.isNotEmpty){
+      return true;
+    }
+    return false;
+  }
+
+  void seleccionarTienda(int index) {
+    tiendaSeleccionada = index;
+    safeNotifyListeners();
   }
 
 }

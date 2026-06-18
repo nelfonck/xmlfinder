@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:comprassj/models/razonsocial';
+import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/services/preferencias.dart';
 import 'package:http/http.dart' as http;
 

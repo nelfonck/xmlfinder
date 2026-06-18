@@ -116,19 +116,6 @@ class NuevaRazonSocialView extends StatelessWidget {
                     onChanged: (value){
                       
                     },
-                    controller: model.correoController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Correo'
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  TextField(
-                    onChanged: (value){
-                      
-                    },
                     controller: model.telefonoController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
@@ -137,6 +124,48 @@ class NuevaRazonSocialView extends StatelessWidget {
                   ),
                   SizedBox(
                     height: 15,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: TextField(
+                          onChanged: (value){
+                            
+                          },
+                          controller: model.correoController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Correo'
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 1,
+                        child: TextField(
+                          controller: model.claveCorreoController,
+                          obscureText: !model.mostrandoClave,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: 'Clave correo',
+                            prefixIcon: const Icon(Icons.lock),
+                            suffixIcon: GestureDetector(
+                              onTapDown: (_) {
+                                model.mostrarClave(true);
+                              },
+                              onTapUp: (_) {
+                                model.mostrarClave(false);
+                              },
+                              onTapCancel: () {
+                                model.mostrarClave(false);
+                              },
+                              child: const Icon(Icons.visibility),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -14,15 +14,14 @@ class Tienda {
     String telefono;
     String correo;
     String direccion;
-    String claveCorreo;
 
     Tienda({
         required this.id,
         required this.nombre,
         required this.telefono,
         required this.correo,
-        required this.direccion,
-        required this.claveCorreo,
+        required this.direccion
+        
     });
 
     Tienda copyWith({
@@ -31,7 +30,6 @@ class Tienda {
         String? telefono,
         String? correo,
         String? direccion,
-        String? claveCorreo,
     }) => 
         Tienda(
             id: id ?? this.id,
@@ -39,7 +37,6 @@ class Tienda {
             telefono: telefono ?? this.telefono,
             correo: correo ?? this.correo,
             direccion: direccion ?? this.direccion,
-            claveCorreo: claveCorreo ?? this.claveCorreo,
         );
 
     factory Tienda.fromJson(Map<String, dynamic> json) => Tienda(
@@ -48,7 +45,6 @@ class Tienda {
         telefono: json["telefono"],
         correo: json["correo"],
         direccion: json["direccion"],
-        claveCorreo: json["clave_correo"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -56,7 +52,6 @@ class Tienda {
         "nombre": nombre,
         "telefono": telefono,
         "correo": correo,
-        "direccion": direccion,
-        "clave_correo": claveCorreo,
+        "direccion": direccion
     };
 }

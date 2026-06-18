@@ -1,4 +1,4 @@
-import 'package:comprassj/models/razonsocial';
+import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/services/razonsocialservice.dart';
 
 class RazonSocialRepository {

@@ -1,4 +1,7 @@
+import 'package:comprassj/models/razonsocial.dart';
+import 'package:comprassj/repositories/razonsocialrepository.dart';
 import 'package:comprassj/repositories/tiendarepository.dart';
+import 'package:comprassj/services/razonsocialservice.dart';
 import 'package:comprassj/services/tiendaservice.dart';
 import 'package:flutter/material.dart';
 
@@ -8,12 +11,13 @@ class TiendaViewModel extends ChangeNotifier{
   TextEditingController telefonoController = TextEditingController();
   TextEditingController direccionController = TextEditingController();
   TextEditingController correoController = TextEditingController();
-  TextEditingController claveCorreoController = TextEditingController();
-  bool mostrandoClave = false;
-  
 
   final Tiendarepository _repository = Tiendarepository(TiendaService());
+  final RazonSocialRepository _repositoryRS = RazonSocialRepository(RazonSocialService());
 
+  List<RazonSocial> razonSocialList = [];
+
+  bool _disposed = false;
 
   Future<void> guardarTienda() async{
 
@@ -22,11 +26,17 @@ class TiendaViewModel extends ChangeNotifier{
       'id_razon_social': 1,
       'telefono': telefonoController.text,
       'correo': correoController.text,
-      'direccion': direccionController.text,
-      'clave_correo': claveCorreoController.text
+      'direccion': direccionController.text
     };
 
     await _repository.guardarTienda(params);
+  }
+
+  Future<void> getRazonesSociales()async{
+
+    razonSocialList = await _repositoryRS.getRazonesSociales();
+
+    safeNotifyListeners();
   }
 
   void clearControllers(){
@@ -34,13 +44,20 @@ class TiendaViewModel extends ChangeNotifier{
       telefonoController.clear();
       direccionController.clear();
       correoController.clear();
-      claveCorreoController.clear();
       nombreFocusNode.requestFocus();
   }
 
-  void mostrarClave(bool value){
-    mostrandoClave = value;
-    notifyListeners();
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
+
+  void safeNotifyListeners() {
+    if (!_disposed) {
+      notifyListeners();
+    }
+  }
+
 
 }

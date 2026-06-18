@@ -18,6 +18,7 @@ class RazonSocial {
     String telefono;
     bool activo;
     DateTime fechaRegistro;
+    String claveCorreo;
 
     RazonSocial({
         required this.id,
@@ -29,6 +30,7 @@ class RazonSocial {
         required this.telefono,
         required this.activo,
         required this.fechaRegistro,
+        required this.claveCorreo,
     });
 
     RazonSocial copyWith({
@@ -41,6 +43,7 @@ class RazonSocial {
         String? telefono,
         bool? activo,
         DateTime? fechaRegistro,
+        String? claveCorreo
     }) => 
         RazonSocial(
             id: id ?? this.id,
@@ -52,6 +55,7 @@ class RazonSocial {
             telefono: telefono ?? this.telefono,
             activo: activo ?? this.activo,
             fechaRegistro: fechaRegistro ?? this.fechaRegistro,
+            claveCorreo: claveCorreo ?? this.claveCorreo,
         );
 
     factory RazonSocial.fromJson(Map<String, dynamic> json) => RazonSocial(
@@ -64,6 +68,7 @@ class RazonSocial {
         telefono: json["telefono"],
         activo: json["activo"],
         fechaRegistro: DateTime.parse(json["fecha_registro"]),
+        claveCorreo: json["clave_correo"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -76,5 +81,6 @@ class RazonSocial {
         "telefono": telefono,
         "activo": activo,
         "fecha_registro": fechaRegistro.toIso8601String(),
+        "clave_correo": claveCorreo,
     };
 }

@@ -1,3 +1,4 @@
+import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/viewmodels/tiendaviewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:comprassj/helpers/mensajes.dart';
@@ -9,7 +10,8 @@ class NuevaTiendaView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => TiendaViewModel(),
+      create: (_) => TiendaViewModel()
+      ..getRazonesSociales(),
       child: Consumer<TiendaViewModel>(
         builder: ((context, model, child) {
           return Scaffold(
@@ -72,6 +74,24 @@ class NuevaTiendaView extends StatelessWidget {
                   SizedBox(
                     height: 15,
                   ),
+                  DropdownButtonFormField<RazonSocial>(
+                    decoration: const InputDecoration(
+                      labelText: 'Razon Social',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: model.razonSocialList.map((razonsocial){
+                      return DropdownMenuItem(
+                        value: razonsocial,
+                        child: Text(razonsocial.nombre)
+                      );
+                    }).toList(),
+                    onChanged: (value){
+
+                    }
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
                   TextField(
                     onChanged: (value){
                       
@@ -111,27 +131,6 @@ class NuevaTiendaView extends StatelessWidget {
                   SizedBox(
                     height: 15,
                   ),
-                  TextField(
-                    controller: model.claveCorreoController,
-                    obscureText: !model.mostrandoClave,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: 'Clave correo',
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: GestureDetector(
-                        onTapDown: (_) {
-                          model.mostrarClave(true);
-                        },
-                        onTapUp: (_) {
-                          model.mostrarClave(false);
-                        },
-                        onTapCancel: () {
-                          model.mostrarClave(false);
-                        },
-                        child: const Icon(Icons.visibility),
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),
