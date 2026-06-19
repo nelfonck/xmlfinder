@@ -16,14 +16,15 @@ class TiendaViewModel extends ChangeNotifier{
   final RazonSocialRepository _repositoryRS = RazonSocialRepository(RazonSocialService());
 
   List<RazonSocial> razonSocialList = [];
+  RazonSocial? selectedRazonSocial;
 
   bool _disposed = false;
 
-  Future<void> guardarTienda() async{
+  Future<void> guardarTienda( RazonSocial? razonSocial ) async{
 
     Map<String,dynamic> params = {
       'nombre': nombreController.text,
-      'id_razon_social': 1,
+      'id_razon_social': razonSocial?.id,
       'telefono': telefonoController.text,
       'correo': correoController.text,
       'direccion': direccionController.text

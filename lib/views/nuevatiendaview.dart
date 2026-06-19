@@ -29,8 +29,11 @@ class NuevaTiendaView extends StatelessWidget {
                 IconButton(
                   onPressed: ()async{
                     try {
-
-                      await model.guardarTienda();
+                      if (model.selectedRazonSocial==null){
+                        Mensajes.error(context, "Debe seleccionar una razon social");
+                        return;
+                      }
+                      await model.guardarTienda( model.selectedRazonSocial );
 
                       if (context.mounted){
                         Mensajes.exito(context, 'Tienda guardada correctamente');
@@ -86,7 +89,7 @@ class NuevaTiendaView extends StatelessWidget {
                       );
                     }).toList(),
                     onChanged: (value){
-
+                      model.selectedRazonSocial = value;
                     }
                   ),
                   SizedBox(
