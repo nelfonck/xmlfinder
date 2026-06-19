@@ -1,7 +1,6 @@
 import 'package:comprassj/repositories/razonsocialrepository.dart';
 import 'package:comprassj/services/razonsocialservice.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class NuevaRazonSocialViewModel extends ChangeNotifier{
   FocusNode identificacionFocusNode = FocusNode();

@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/models/tienda.dart';
+import 'package:comprassj/repositories/razonsocialrepository.dart';
 import 'package:comprassj/repositories/tiendarepository.dart';
 import 'package:comprassj/services/preferencias.dart';
+import 'package:comprassj/services/razonsocialservice.dart';
 import 'package:comprassj/services/tiendaservice.dart';
 import 'package:xml/xml.dart';
 
@@ -18,10 +21,13 @@ class Xmlfinderviewmodel extends ChangeNotifier{
   List<CorreoFactura> correosBusqueda = [];
   bool obteniendoMensajes = false;
   List<Tienda> tiendas = [];
+  List<RazonSocial> razonesSociales = [];
   bool _disposed = false;
   int? tiendaSeleccionada;
+  int? razonSocialSeleccionada;
 
-  final Tiendarepository _repository = Tiendarepository(TiendaService());
+  final Tiendarepository _repositoryTienda = Tiendarepository(TiendaService());
+  final RazonSocialRepository _repositoryRazonSocial = RazonSocialRepository(RazonSocialService());
 
   Future<void> conectar() async {
     client = ImapClient(isLogEnabled: true);
@@ -276,12 +282,19 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     return true;
   }
 
-  Future<void> cargarTiendas(BuildContext context) async{
+  Future<void> cargarTiendas() async{
     if (!configuracionLista()){
-      Navigator.pushNamed(context, 'configuracion');
       return;
     }
-    tiendas = await _repository.getTiendas();
+    tiendas = await _repositoryTienda.getTiendas();
+    safeNotifyListeners();
+  }
+
+  Future<void> cargarRazonesSociales() async{
+    if (!configuracionLista()){
+      return;
+    }
+    razonesSociales = await _repositoryRazonSocial.getRazonesSociales();
     safeNotifyListeners();
   }
 
@@ -306,6 +319,11 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
   void seleccionarTienda(int index) {
     tiendaSeleccionada = index;
+    safeNotifyListeners();
+  }
+
+  void seleccionarRazonSocial(int index) {
+    razonSocialSeleccionada = index;
     safeNotifyListeners();
   }
 

@@ -2,27 +2,45 @@ import 'package:comprassj/helpers/mensajes.dart';
 import 'package:comprassj/viewmodels/xmlfinderviewmodel.dart';
 import 'package:comprassj/widgets/fondodegradado.dart';
 import 'package:comprassj/widgets/menubutton.dart';
+import 'package:comprassj/widgets/modelready.dart';
 import 'package:comprassj/widgets/popmenubutton.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class XmlFinderView extends StatelessWidget {
+class XmlFinderView extends StatefulWidget {
   const XmlFinderView({super.key});
 
   @override
+  State<XmlFinderView> createState() => _XmlFinderViewState();
+}
+
+class _XmlFinderViewState extends State<XmlFinderView> {
+
+  @override
   Widget build(BuildContext context) {
-    TextEditingController txtController = TextEditingController(text: '40500249010000048907');
+    TextEditingController txtController = TextEditingController();
+    // Razones Sociales
+    const Color colorRazonSocial = Colors.lightBlueAccent;
+    // Tiendas
+    const Color colorTienda = Colors.blue;
 
     return ChangeNotifierProvider(
-      create: (_) => Xmlfinderviewmodel()
-      ..cargarTiendas(context).onError((error, stackTrace){
-        WidgetsBinding.instance.addPostFrameCallback((_){
-          if (context.mounted){
-            Mensajes.error(context, error.toString());
+      create: (_) => Xmlfinderviewmodel(),
+      child: ModelReady<Xmlfinderviewmodel>(
+        onModelReady: (model)async{
+   
+          if (!model.configuracionLista()){
+            Navigator.of(context).pushNamed('configuracion');
+            return;
           }
-        });
-      }),
-      child: Consumer<Xmlfinderviewmodel>(
+          await model.cargarTiendas().onError(((error, stackTrace) {
+            Mensajes.error(context, error.toString());
+          }));
+          await model.cargarRazonesSociales().onError(((error, stackTrace) {
+            Mensajes.error(context, error.toString());
+          }));
+        },
+        child: Consumer<Xmlfinderviewmodel>(
         builder: (context, model, child) => Scaffold(
           appBar: AppBar(
             flexibleSpace: FondoDegradado(),
@@ -72,37 +90,35 @@ class XmlFinderView extends StatelessWidget {
           body: Column(
             children: [
               SizedBox(
-                height: 100,
+                height: 60,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: model.tiendas.length,
+                  itemCount: model.razonesSociales.length,
                   itemBuilder: (context, index){
-                    final seleccionada = model.tiendaSeleccionada == index;
+                    final seleccionada = model.razonSocialSeleccionada == index;
                     return GestureDetector(
                       onTap: () {
-                        model.seleccionarTienda(index);
+                        model.seleccionarRazonSocial(index);
                       },
                       child: Container(
-                        width: 90,
-                        height: 90,
+                        width: 100,
                         margin: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: seleccionada ? Colors.blue : Colors.transparent,
+                          color: seleccionada ? colorRazonSocial : Colors.transparent,
                           border: Border.all(
-                            color: seleccionada ? Colors.transparent : Colors.blue,
+                            color: seleccionada ? Colors.transparent : colorRazonSocial,
                             width: 2,
                           ),
                         ),
                         child: Center(
                           child: Text(
-                            model.tiendas[index].nombre,
+                            model.razonesSociales[index].nombre,
                             textAlign: TextAlign.center,
-                            maxLines: 3,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 11,
-                              color: seleccionada ? Colors.white : Colors.blue,
+                              color: seleccionada ? Colors.white : Colors.white,
                             ),
                           ),
                         ),
@@ -111,40 +127,68 @@ class XmlFinderView extends StatelessWidget {
                   }
                 ),
               ),
-              Divider(),
-              TextButton(
-                onPressed: () async {
-                  await model.conectar();
-                }, 
-                child: const Text('Conectar')
-              ),
-              TextButton(
-                onPressed: () async {
-                  await model.cargarFacturas();
-                }, 
-                child: const Text('Cargar facturas')
-              ),
-              SizedBox(
-                width: 300,
-                child: TextField(
-                  onChanged: (value){
-                    model.encontrarFacturas(value);
-                  },
-                  controller: txtController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Numero de facura'
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 60,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: model.tiendas.length,
+                        itemBuilder: (context, index){
+                          final seleccionada = model.tiendaSeleccionada == index;
+                          return GestureDetector(
+                            onTap: () {
+                              model.seleccionarTienda(index);
+                            },
+                            child: Container(
+                              width: 100,
+                              margin: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: seleccionada ? colorTienda : Colors.transparent,
+                                border: Border.all(
+                                  color: seleccionada ? Colors.transparent : colorTienda,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  model.tiendas[index].nombre,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: seleccionada ? Colors.white : Colors.white ,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      ),
+                    ),
                   ),
-                ),
+                  SizedBox(
+                      width: 300,
+                      child: TextField(
+                        onChanged: (value){
+                          model.encontrarFacturas(value);
+                        },
+                        controller: txtController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20)
+                          ),
+                          hintText: 'Numero de facura'
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10,)
+                ],
               ),
-              TextButton(
-                onPressed: () {
-                   model.encontrarFacturas(txtController.text);
-                }, 
-                child: const Text('Encontrar factura')
-              ),
+              Divider(height: 1,color: Colors.white,),
               Expanded(
-                
                 child:  model.correosBusqueda.isEmpty ?
                 Center(
                   child: const Text('No hay datos para mostrar'),
@@ -183,6 +227,8 @@ class XmlFinderView extends StatelessWidget {
           ),
         ),
       ),
+      )
+      
     );
   }
 }

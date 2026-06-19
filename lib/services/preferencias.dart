@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Preferencias {
-  static SharedPreferences? _prefs;
+  static late SharedPreferences? _prefs;
 
   static const Map<String,String> headers = {
     'Authorization':'Bearer DuheFwIAohGVp6hwWEDWwChvi6j4SJt7',
@@ -34,5 +34,11 @@ class Preferencias {
     String host = _prefs?.getString('host') ?? '';
     String port = _prefs?.getString('port') ?? '';
     return '$host:$port';
+  }
+
+  static String get directoryxml => _prefs?.getString('directoryxml') ?? '';
+
+  static set directoryxml(String valor){
+    _prefs?.setString('directoryxml', valor);
   }
 }
