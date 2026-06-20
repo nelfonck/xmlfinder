@@ -29,7 +29,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
   final Tiendarepository _repositoryTienda = Tiendarepository(TiendaService());
   final RazonSocialRepository _repositoryRazonSocial = RazonSocialRepository(RazonSocialService());
 
-  Future<void> conectar() async {
+  Future<void> conectar(String correo, String clave) async {
     client = ImapClient(isLogEnabled: true);
 
     await client?.connectToServer(
@@ -39,12 +39,11 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     );
 
     await client?.login(
-      'facturas.lacasadelascarnes1@gmail.com',
-      'wozfxmekrkysjrqf',
+      correo,
+      clave,
     );
 
     client?.isLogEnabled = false;
-
   }
 
   Future<void> cargarFacturas() async{
@@ -127,8 +126,9 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       if (nombreComercial==null){
         return;
       }
+      final rutaCarpeta = '${Preferencias.directoryxml}\\${tiendas[tiendaSeleccionada!].nombre}\\$nombreComercial';
 
-      final carpeta = Directory(nombreComercial);
+      final carpeta = Directory(rutaCarpeta);
 
       if (!await carpeta.exists()) {
         await carpeta.create(recursive: true);
@@ -175,7 +175,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
           String nombreArchivoSalida =   '$prefix$numeroConsecutivo.$extension';
 
           //definir la ruta completa del archivo
-          final rutaArchivo ='${carpeta.path}/$nombreArchivoSalida';
+          final rutaArchivo = '$rutaCarpeta\\$nombreArchivoSalida';
           
           await File(rutaArchivo).writeAsBytes(bytes);
 

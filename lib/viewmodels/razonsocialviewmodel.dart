@@ -13,7 +13,7 @@ class NuevaRazonSocialViewModel extends ChangeNotifier{
 
   final RazonSocialRepository _repository = RazonSocialRepository(RazonSocialService());
 
-  bool _disposed = true;
+  bool _disposed = false;
 
   bool mostrandoClave = false;
 

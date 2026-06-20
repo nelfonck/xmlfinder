@@ -97,8 +97,18 @@ class _XmlFinderViewState extends State<XmlFinderView> {
                   itemBuilder: (context, index){
                     final seleccionada = model.razonSocialSeleccionada == index;
                     return GestureDetector(
-                      onTap: () {
-                        model.seleccionarRazonSocial(index);
+                      onTap: () async{
+                        if (model.razonSocialSeleccionada != index){
+                          try {
+                            model.seleccionarRazonSocial(index);
+                            await model.conectar(model.razonesSociales[index].correo, model.razonesSociales[index].claveCorreo);
+                            await model.cargarFacturas();
+                          } catch (e) {
+                            if (context.mounted){
+                              Mensajes.error(context,e.toString().replaceFirst('Exception: ', ''));
+                            }
+                          }
+                        }
                       },
                       child: Container(
                         width: 100,
@@ -213,7 +223,23 @@ class _XmlFinderViewState extends State<XmlFinderView> {
                         },
                         trailing: IconButton(
                           onPressed: ()async{
-                            await model.descargarAdjuntos(model.correosBusqueda[index]);
+                            try {
+                              if(model.tiendaSeleccionada==null){
+                                if (context.mounted){
+                                  Mensajes.error(context,'Debe seleccionar una tienda');
+                                  return;
+                              }
+                              }
+                              await model.descargarAdjuntos(model.correosBusqueda[index]);
+                              if(context.mounted){
+                                Mensajes.exito(context, 'Factura descargada!!');
+                              }
+                            } catch (e) {
+                              if (context.mounted){
+                                //print(e.toString().replaceFirst('Exception: ', ''));
+                                Mensajes.error(context,e.toString().replaceFirst('Exception: ', ''));
+                              }
+                            }
                           }, 
                           icon: const Icon(Icons.download),
                         ),
@@ -222,7 +248,8 @@ class _XmlFinderViewState extends State<XmlFinderView> {
                   },
                 ),
               ),
-              !model.obteniendoMensajes ? Container() : LinearProgressIndicator()
+              SizedBox(height: 5,),
+              !model.obteniendoMensajes ? Container() : LinearProgressIndicator(),
             ],
           ),
         ),
