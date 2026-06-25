@@ -115,6 +115,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     if (resultado?.messages == null || resultado!.messages.isEmpty) {
       return;
     }
+
     final mensaje = resultado.messages.first;
 
       //crear carpeta con el nombre comercial de la factura, antes de guardar los archivos
@@ -124,7 +125,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       final String? numeroConsecutivo = params?['numero_consecutivo'];
       
       if (nombreComercial==null){
-        return;
+        throw Exception('No fue posible obtener el nombre comercial');
       }
       final rutaCarpeta = '${Preferencias.directoryxml}\\${tiendas[tiendaSeleccionada!].nombre}\\$nombreComercial';
 
@@ -242,12 +243,15 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
           final document = XmlDocument.parse(xmlString);
 
-          //obtener el nombre comercial
-          final nombreComercial = document
-              .findAllElements('NombreComercial')
+          final emisor = document.findAllElements('Emisor').firstOrNull;
+
+          final nombreComercial = emisor
+              ?.findElements('NombreComercial')
+              .firstOrNull
+              ?.innerText ??emisor
+              ?.findElements('Nombre')
               .firstOrNull
               ?.innerText;
-
           //obtener el nombre comercial
           final numeroConsecutivo = document
               .findAllElements('NumeroConsecutivo')
