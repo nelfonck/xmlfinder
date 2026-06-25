@@ -2,6 +2,7 @@ import 'package:comprassj/services/preferencias.dart';
 import 'package:comprassj/views/configuracionview.dart';
 import 'package:comprassj/views/nuevarazonsocialview.dart';
 import 'package:comprassj/views/nuevatiendaview.dart';
+import 'package:comprassj/views/nuevoproveedorview.dart';
 import 'package:comprassj/views/xmlfinderview.dart';
 import 'package:flutter/material.dart';
 
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
         'configuracion': (context) => const ConfiguracionView(),
         'razon_social': (context) => const NuevaRazonSocialView(),
         'nueva_tienda': (context) => const NuevaTiendaView(),
+        'nuevo_proveedor': (context) => const NuevoProveedorView(),
       },
       home: const XmlFinderView(),
     );

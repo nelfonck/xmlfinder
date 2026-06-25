@@ -64,7 +64,9 @@ class _XmlFinderViewState extends State<XmlFinderView> {
               menuButton(
                 icon: Icons.local_shipping, 
                 text: 'Proveedores', 
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, 'nuevo_proveedor');
+                },
               ),
               menuButton(
                 icon: Icons.file_download, 
@@ -188,7 +190,7 @@ class _XmlFinderViewState extends State<XmlFinderView> {
                         controller: txtController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20)
+                            borderRadius: BorderRadius.circular(10)
                           ),
                           hintText: 'Numero de facura'
                         ),
