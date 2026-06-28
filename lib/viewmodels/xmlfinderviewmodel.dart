@@ -126,6 +126,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       final Map<String,dynamic>? params = await getNombreComercial(mensaje);
       final String? nombreComercial = params?['nombre_comercial'];
       final String? numeroConsecutivo = params?['numero_consecutivo'];
+      String? rutaArchivoFactura;
       
       if (nombreComercial==null){
         throw Exception('No fue posible obtener el nombre comercial');
@@ -137,7 +138,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       if (!await carpeta.exists()) {
         await carpeta.create(recursive: true);
       }
-      
+
       for (final part in mensaje.parts ?? <MimePart>[]) {
 
           final nombreArchivo = obtenerNombreArchivo(part);
@@ -178,14 +179,19 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
           String nombreArchivoSalida =   '$prefix$numeroConsecutivo.$extension';
 
+
           //definir la ruta completa del archivo
           final rutaArchivo = '$rutaCarpeta\\$nombreArchivoSalida';
           
+          if (nombreArchivoSalida.toLowerCase().endsWith('.xml')){
+            rutaArchivoFactura = rutaArchivo;
+          }
+
           await File(rutaArchivo).writeAsBytes(bytes);
 
         } 
 
-        return rutaCarpeta;
+        return rutaArchivoFactura;
 
   }
 
@@ -276,17 +282,10 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     return null;
   }
 
-  Future<void> guardarFactura(String rutaCarpeta, CorreoFactura correo,{
+  Future<void> guardarFactura(String ruta, CorreoFactura correo,{
     required Future<void> Function(Map<String,dynamic> emisor) onEmisorNoExiste,
     required Future<void> Function(Map<String,dynamic> receptor) onReceptorNoExiste,
   }) async{
-
-      String? nombreArchivoFactura = obtenerNombreArchivoFacturaXml(correo.fileNames);
-
-      if (nombreArchivoFactura==null){
-        throw Exception('No fue posible obtener el nombre del archivo de la factura');
-      }
-      final ruta = '$rutaCarpeta\\$nombreArchivoFactura';
 
       final contenido = await File(ruta).readAsString();
 
@@ -295,13 +294,14 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       final emisor = document.findAllElements('Emisor').firstOrNull;
       final receptor = document.findAllElements('Receptor').firstOrNull;
 
+
       Map<String,dynamic>? emisorMap = obtenerDatosEmisor(emisor);
 
       if (emisorMap==null){
         throw Exception('No fue posible obtener los datos del emisor: XmlDocument is null');
       }
 
-      bool existeProveedor = await existeEmisor(emisorMap['identificacion']);
+      bool existeProveedor = await existeEmisor(emisorMap['identificacion_emisor']);
 
       if (!existeProveedor){
         await onEmisorNoExiste(emisorMap);
@@ -316,11 +316,11 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       final nombreEmisor = emisor.findElements('NombreComercial').firstOrNull?.innerText ??
         emisor.findElements('Nombre').firstOrNull?.innerText;
 
-      final identificacionEmisor = emisor.findElements('Identificacion').firstOrNull?.innerText;
+      final identificacionEmisor = emisor.findElements('Identificacion').firstOrNull?.findElements('Numero').firstOrNull?.innerText;
 
-      final tipoIdentificacionEmisor = emisor.findElements('Tipo').firstOrNull?.innerText;
+      final tipoIdentificacionEmisor = emisor.findElements('Identificacion').firstOrNull?.findElements('Tipo').firstOrNull?.innerText;
 
-      final telefonoEmisor = emisor.findElements('Telefono').firstOrNull?.innerText;
+      final telefonoEmisor = emisor.findElements('Telefono').firstOrNull?.findElements('NumTelefono').firstOrNull?.innerText;
 
       final correoEmisor = emisor.findElements('CorreoElectronico').firstOrNull?.innerText;
 
@@ -352,26 +352,6 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       return false;
     }
     return true;
-  }
-
-  String? obtenerNombreArchivoFacturaXml(List<String>? fileNames){
-    if (fileNames==null) return null;
-    for (var e in fileNames) {
-      if (
-        !e.toLowerCase().contains('resp') || 
-        !e.toLowerCase().contains('hacienda') ||
-        //nombre.toLowerCase().contains('nc') ||
-        !e.toLowerCase().contains('dgt') ||
-        !e.toLowerCase().contains('ahc') ||
-        !e.toLowerCase().endsWith('r.xml') ||
-        !e.toLowerCase().contains('mh') ||
-        //!e.toLowerCase().contains('nota') ||
-        !e.toLowerCase().endsWith('.pdf')
-      ){
-        return e;
-      }
-    }
-    return null;
   }
 
   Future<void> cargarTiendas() async{

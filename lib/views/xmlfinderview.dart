@@ -1,5 +1,6 @@
 import 'package:comprassj/helpers/mensajes.dart';
 import 'package:comprassj/viewmodels/xmlfinderviewmodel.dart';
+import 'package:comprassj/views/nuevoproveedorview.dart';
 import 'package:comprassj/widgets/fondodegradado.dart';
 import 'package:comprassj/widgets/menubutton.dart';
 import 'package:comprassj/widgets/modelready.dart';
@@ -241,14 +242,14 @@ class _XmlFinderViewState extends State<XmlFinderView> {
                               if (rutaCarpeta!=null){
                                 await model.guardarFactura(rutaCarpeta, correo,
                                   onEmisorNoExiste: (emisor) async{
-                                  
+                                    await showDialog(context: context, builder: (_) => NuevoProveedorView(emisor: emisor,));
                                   },onReceptorNoExiste: (receptor) async{
                                   
                                 },);
                               }
                             } catch (e) {
                               if (context.mounted){
-                                //print(e.toString().replaceFirst('Exception: ', ''));
+                                print(e.toString().replaceFirst('Exception: ', ''));
                                 Mensajes.error(context,e.toString().replaceFirst('Exception: ', ''));
                               }
                             }

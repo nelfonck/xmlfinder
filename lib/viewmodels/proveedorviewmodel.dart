@@ -51,7 +51,17 @@ class ProveedorViewModel extends ChangeNotifier{
       nombreComercialController.clear();
       correoController.clear();
       nombreFocusNode.requestFocus();
+      
       identificacionController.clear();
+  }
+  void cargarValores(Map<String,dynamic>? emisor){
+      nombreController.text = emisor?['nombre_emisor'] ?? '';
+      telefonoController.text = emisor?['telefono_emisor'] ?? '';
+      nombreComercialController.text = emisor?['nombre_emisor'] ?? '';
+      identificacionController.text = emisor?['identificacion_emisor'] ?? '';
+      correoController.text = emisor?['correo_emisor'] ?? '';
+      tipoSeleccionado = emisor?['tipo_identificacion_emisor'] ?? '';
+      safeNotifyListeners();
   }
 
   @override
