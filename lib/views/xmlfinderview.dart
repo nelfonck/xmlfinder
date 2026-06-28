@@ -232,9 +232,19 @@ class _XmlFinderViewState extends State<XmlFinderView> {
                                   return;
                               }
                               }
-                              await model.descargarAdjuntos(model.correosBusqueda[index]);
+                              String? rutaCarpeta = await model.descargarAdjuntos(model.correosBusqueda[index]);
+
                               if(context.mounted){
                                 Mensajes.exito(context, 'Factura descargada!!');
+                              }
+                              //Guardar factura en fase de datos
+                              if (rutaCarpeta!=null){
+                                await model.guardarFactura(rutaCarpeta, correo,
+                                  onEmisorNoExiste: (emisor) async{
+                                  
+                                  },onReceptorNoExiste: (receptor) async{
+                                  
+                                },);
                               }
                             } catch (e) {
                               if (context.mounted){

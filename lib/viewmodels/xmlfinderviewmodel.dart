@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/models/tienda.dart';
+import 'package:comprassj/repositories/proveedorrepository.dart';
 import 'package:comprassj/repositories/razonsocialrepository.dart';
 import 'package:comprassj/repositories/tiendarepository.dart';
 import 'package:comprassj/services/preferencias.dart';
+import 'package:comprassj/services/proveedorservice.dart';
 import 'package:comprassj/services/razonsocialservice.dart';
 import 'package:comprassj/services/tiendaservice.dart';
 import 'package:xml/xml.dart';
@@ -28,6 +30,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
   final Tiendarepository _repositoryTienda = Tiendarepository(TiendaService());
   final RazonSocialRepository _repositoryRazonSocial = RazonSocialRepository(RazonSocialService());
+  final ProveedorRepository _proveedorRepository = ProveedorRepository(ProveedorService());
 
   Future<void> conectar(String correo, String clave) async {
     client = ImapClient(isLogEnabled: true);
@@ -103,7 +106,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<void> descargarAdjuntos(
+  Future<String?> descargarAdjuntos(
     CorreoFactura correo,
   ) async {
 
@@ -113,7 +116,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     );
 
     if (resultado?.messages == null || resultado!.messages.isEmpty) {
-      return;
+      return null;
     }
 
     final mensaje = resultado.messages.first;
@@ -182,6 +185,8 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
         } 
 
+        return rutaCarpeta;
+
   }
 
   String? obtenerNombreArchivo(MimePart part) {
@@ -200,6 +205,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
     return null;
   }
+
 
   Future<Map<String,dynamic>?> getNombreComercial(MimeMessage? mensaje)async{
       for (final part in mensaje?.parts ?? <MimePart>[]) {
@@ -270,6 +276,68 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     return null;
   }
 
+  Future<void> guardarFactura(String rutaCarpeta, CorreoFactura correo,{
+    required Future<void> Function(Map<String,dynamic> emisor) onEmisorNoExiste,
+    required Future<void> Function(Map<String,dynamic> receptor) onReceptorNoExiste,
+  }) async{
+
+      String? nombreArchivoFactura = obtenerNombreArchivoFacturaXml(correo.fileNames);
+
+      if (nombreArchivoFactura==null){
+        throw Exception('No fue posible obtener el nombre del archivo de la factura');
+      }
+      final ruta = '$rutaCarpeta\\$nombreArchivoFactura';
+
+      final contenido = await File(ruta).readAsString();
+
+      final document = XmlDocument.parse(contenido);
+
+      final emisor = document.findAllElements('Emisor').firstOrNull;
+      final receptor = document.findAllElements('Receptor').firstOrNull;
+
+      Map<String,dynamic>? emisorMap = obtenerDatosEmisor(emisor);
+
+      if (emisorMap==null){
+        throw Exception('No fue posible obtener los datos del emisor: XmlDocument is null');
+      }
+
+      bool existeProveedor = await existeEmisor(emisorMap['identificacion']);
+
+      if (!existeProveedor){
+        await onEmisorNoExiste(emisorMap);
+      }
+
+  }
+
+  Map<String,dynamic>? obtenerDatosEmisor(XmlElement? emisor){
+      if (emisor==null) return null;
+
+      //Datos del proveedor
+      final nombreEmisor = emisor.findElements('NombreComercial').firstOrNull?.innerText ??
+        emisor.findElements('Nombre').firstOrNull?.innerText;
+
+      final identificacionEmisor = emisor.findElements('Identificacion').firstOrNull?.innerText;
+
+      final tipoIdentificacionEmisor = emisor.findElements('Tipo').firstOrNull?.innerText;
+
+      final telefonoEmisor = emisor.findElements('Telefono').firstOrNull?.innerText;
+
+      final correoEmisor = emisor.findElements('CorreoElectronico').firstOrNull?.innerText;
+
+      return {
+        'nombre_emisor': nombreEmisor,
+        'identificacion_emisor': identificacionEmisor,
+        'tipo_identificacion_emisor': tipoIdentificacionEmisor,
+        'telefono_emisor': telefonoEmisor,
+        'correo_emisor': correoEmisor,
+      };
+  }
+
+  Future<bool> existeEmisor(String identificacion)async{
+    return await _proveedorRepository.existeProveedor(identificacion);
+  }
+
+
   bool validarNombreArchivo(String nombre){
     if (
       nombre.toLowerCase().contains('resp') || 
@@ -284,6 +352,26 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       return false;
     }
     return true;
+  }
+
+  String? obtenerNombreArchivoFacturaXml(List<String>? fileNames){
+    if (fileNames==null) return null;
+    for (var e in fileNames) {
+      if (
+        !e.toLowerCase().contains('resp') || 
+        !e.toLowerCase().contains('hacienda') ||
+        //nombre.toLowerCase().contains('nc') ||
+        !e.toLowerCase().contains('dgt') ||
+        !e.toLowerCase().contains('ahc') ||
+        !e.toLowerCase().endsWith('r.xml') ||
+        !e.toLowerCase().contains('mh') ||
+        //!e.toLowerCase().contains('nota') ||
+        !e.toLowerCase().endsWith('.pdf')
+      ){
+        return e;
+      }
+    }
+    return null;
   }
 
   Future<void> cargarTiendas() async{
@@ -330,5 +418,6 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     razonSocialSeleccionada = index;
     safeNotifyListeners();
   }
+
 
 }

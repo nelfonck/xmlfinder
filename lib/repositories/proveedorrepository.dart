@@ -13,4 +13,8 @@ class ProveedorRepository {
     return _service.guardarProveedor(params);
   }
 
+  Future<bool> existeProveedor(String identificacion)async{
+    return _service.existeProveedor(identificacion);
+  }
+
 }
