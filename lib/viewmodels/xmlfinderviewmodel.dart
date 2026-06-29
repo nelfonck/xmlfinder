@@ -309,6 +309,35 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
   }
 
+  Map<String,dynamic>? factura(XmlElement? document){
+    final resumentFactura = document?.findAllElements('ResumenFactura').firstOrNull;
+      return {
+        'clave': document?.findAllElements('Clave').firstOrNull?.innerText ?? '',
+        'numero_consecutivo': document?.findAllElements('NumeroConsecutivo').firstOrNull?.innerText ?? '',
+        'fecha_emision': document?.findAllElements('FechaEmision').firstOrNull?.innerText ?? '',
+        'proveedor_sistemas': document?.findAllElements('ProveedorSistemas').firstOrNull?.innerText ?? '',
+        'codigo_actividad_emisor': document?.findAllElements('CodigoActividadEmisor').firstOrNull?.innerText ?? '',
+        'codigo_actividad_receptor': document?.findAllElements('CodigoActividadReceptor').firstOrNull?.innerText ?? '',
+        'emisor_identificacion': document?.findAllElements('Emisor').firstOrNull?.findAllElements('Identificacion').firstOrNull?.findAllElements('Numero').firstOrNull?.innerText ?? '',
+        'emisor_nombre': document?.findAllElements('Emisor').firstOrNull?.findAllElements('Nombre').firstOrNull?.innerText ?? '',
+        'emisor_nombre_comercial': document?.findAllElements('Emisor').firstOrNull?.findAllElements('NombreComercial').firstOrNull?.innerText ?? '',
+        'receptor_identificacion': document?.findAllElements('Receptor').firstOrNull?.findAllElements('Identificacion').firstOrNull?.findAllElements('Numero').firstOrNull?.innerText ?? '',
+        'receptor_nombre': document?.findAllElements('Receptor').firstOrNull?.findAllElements('Nombre').firstOrNull?.innerText ?? '',
+        'receptor_nombre_comercial': document?.findAllElements('Receptor').firstOrNull?.findAllElements('NombreComercial').firstOrNull?.innerText ?? '',
+        'condicion_venta': document?.findAllElements('CondicionVenta').firstOrNull?.innerText ?? '',
+        'condicion_venta_otros': document?.findAllElements('CondicionVentaOtros').firstOrNull?.innerText ?? '',
+        'plazo_credito': document?.findAllElements('PlazoCredito').firstOrNull?.innerText ?? '',
+        'moneda': resumentFactura?.findAllElements('CodigoTipoMoneda').firstOrNull?.findAllElements('CodigoMoneda').firstOrNull?.innerText ?? '',
+        'tipo_cambio': resumentFactura?.findAllElements('CodigoTipoMoneda').firstOrNull?.findAllElements('TipoCambio').firstOrNull?.innerText ?? '',
+        'total_gravado': resumentFactura?.findAllElements('TotalGravado').firstOrNull?.innerText ?? 0,
+        'total_venta': resumentFactura?.findAllElements('TotalVenta').firstOrNull?.innerText ?? 0,
+        'total_venta_neta': resumentFactura?.findAllElements('TotalVentaNeta').firstOrNull?.innerText ?? 0,
+        'total_impuesto': resumentFactura?.findAllElements('TotalImpuesto').firstOrNull?.innerText ?? 0,
+        'total_comprobante': resumentFactura?.findAllElements('TotalComprobante').firstOrNull?.innerText ?? 0,
+      };
+
+  }
+
   Map<String,dynamic>? obtenerDatosEmisor(XmlElement? emisor){
       if (emisor==null) return null;
 
