@@ -58,4 +58,30 @@ class RazonSocialService {
     }
   }
 
+  Future<bool> existeRazonSocial(String identificacion)async{
+    try {
+      final url = Uri.http(Preferencias.baseUrl, '/comprassjapi/public/api/existe-razon-social',{
+        'identificacion': identificacion
+      });
+
+      final resp = await http.get(
+        url,
+        headers: Preferencias.headers
+      );
+
+      final body = jsonDecode(resp.body);
+
+      if (resp.statusCode != 200) {
+        throw Exception(
+          body['message'],
+        );
+      }
+
+      return  body['existe'];
+ 
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
 }

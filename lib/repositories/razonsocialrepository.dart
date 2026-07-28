@@ -13,5 +13,8 @@ class RazonSocialRepository {
     return _service.guardarRazonSocial(params);
   }
 
+  Future<bool> existeRazonSocial(String identificacion)async{
+    return _service.existeRazonSocial(identificacion);
+  }
 
 }

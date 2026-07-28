@@ -307,6 +307,18 @@ class Xmlfinderviewmodel extends ChangeNotifier{
         await onEmisorNoExiste(emisorMap);
       }
 
+      Map<String,dynamic>? receptorMap = obtenerDatosEmisor(receptor);
+
+      if (receptorMap==null){
+        throw Exception('No fue posible obtener los datos del emisor: XmlDocument is null');
+      }
+
+      bool existeRazonSocial = await existeReceptor(receptorMap['identificacion_receptor']);
+
+      if (!existeRazonSocial){
+        await onReceptorNoExiste(receptorMap);
+      }
+
   }
 
   Map<String,dynamic>? factura(XmlElement? document){
@@ -362,8 +374,36 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       };
   }
 
+  Map<String,dynamic>? obtenerDatosReceptor(XmlElement? receptor){
+      if (receptor==null) return null;
+
+      //Datos del proveedor
+      final nombreReceptor = receptor.findElements('NombreComercial').firstOrNull?.innerText ??
+        receptor.findElements('Nombre').firstOrNull?.innerText;
+
+      final identificacionReceptor = receptor.findElements('Identificacion').firstOrNull?.findElements('Numero').firstOrNull?.innerText;
+
+      final tipoIdentificacionReceptor = receptor.findElements('Identificacion').firstOrNull?.findElements('Tipo').firstOrNull?.innerText;
+
+      final telefonoReceptor = receptor.findElements('Telefono').firstOrNull?.findElements('NumTelefono').firstOrNull?.innerText;
+
+      final correoReceptor = receptor.findElements('CorreoElectronico').firstOrNull?.innerText;
+
+      return {
+        'nombre_receptor': nombreReceptor,
+        'identificacion_receptor': identificacionReceptor,
+        'tipo_identificacion_receptor': tipoIdentificacionReceptor,
+        'telefono_receptor': telefonoReceptor,
+        'correo_receptor': correoReceptor,
+      };
+  }
+
   Future<bool> existeEmisor(String identificacion)async{
     return await _proveedorRepository.existeProveedor(identificacion);
+  }
+
+  Future<bool> existeReceptor(String identificacion)async{
+    return await _repositoryRazonSocial.existeRazonSocial(identificacion);
   }
 
 
