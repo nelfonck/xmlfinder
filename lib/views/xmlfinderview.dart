@@ -244,12 +244,13 @@ class _XmlFinderViewState extends State<XmlFinderView> {
                                   onEmisorNoExiste: (emisor) async{
                                     await showDialog(context: context, builder: (_) => NuevoProveedorView(emisor: emisor,));
                                   },onReceptorNoExiste: (receptor) async{
-                                  
+                                    if (context.mounted){
+                                      Mensajes.warning(context, 'Razon social no encontrada, registre lo primero antes de continuar');
+                                    }
                                 },);
                               }
                             } catch (e) {
                               if (context.mounted){
-                                print(e.toString().replaceFirst('Exception: ', ''));
                                 Mensajes.error(context,e.toString().replaceFirst('Exception: ', ''));
                               }
                             }

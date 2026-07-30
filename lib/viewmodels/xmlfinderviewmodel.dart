@@ -307,7 +307,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
         await onEmisorNoExiste(emisorMap);
       }
 
-      Map<String,dynamic>? receptorMap = obtenerDatosEmisor(receptor);
+      Map<String,dynamic>? receptorMap = obtenerDatosReceptor(receptor);
 
       if (receptorMap==null){
         throw Exception('No fue posible obtener los datos del emisor: XmlDocument is null');
@@ -318,6 +318,8 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       if (!existeRazonSocial){
         await onReceptorNoExiste(receptorMap);
       }
+
+      
 
   }
 

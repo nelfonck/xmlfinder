@@ -38,4 +38,22 @@ class Mensajes {
       ),
     );
   }
+
+  static void warning(
+    BuildContext context,
+    String mensaje,
+  ) {
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.orange.shade700,
+        content: Text(
+          mensaje,
+          style: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
 }
