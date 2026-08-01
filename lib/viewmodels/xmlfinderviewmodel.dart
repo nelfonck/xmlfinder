@@ -1,10 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:comprassj/models/detallefacturacompra.dart';
+import 'package:comprassj/models/factura_compra.dart';
 import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/models/tienda.dart';
+import 'package:comprassj/repositories/comprarepository.dart';
 import 'package:comprassj/repositories/proveedorrepository.dart';
 import 'package:comprassj/repositories/razonsocialrepository.dart';
 import 'package:comprassj/repositories/tiendarepository.dart';
+import 'package:comprassj/services/compraservice.dart';
 import 'package:comprassj/services/preferencias.dart';
 import 'package:comprassj/services/proveedorservice.dart';
 import 'package:comprassj/services/razonsocialservice.dart';
@@ -31,6 +35,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
   final Tiendarepository _repositoryTienda = Tiendarepository(TiendaService());
   final RazonSocialRepository _repositoryRazonSocial = RazonSocialRepository(RazonSocialService());
   final ProveedorRepository _proveedorRepository = ProveedorRepository(ProveedorService());
+  final CompraRepository _compraRepository = CompraRepository(CompraService());
 
   Future<void> conectar(String correo, String clave) async {
     client = ImapClient(isLogEnabled: true);
@@ -289,10 +294,13 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
       final contenido = await File(ruta).readAsString();
 
-      final document = XmlDocument.parse(contenido);
+     final document = XmlDocument.parse(contenido);
 
       final emisor = document.findAllElements('Emisor').firstOrNull;
       final receptor = document.findAllElements('Receptor').firstOrNull;
+      final facturaNode = document.findAllElements('FacturaElectronica ').firstOrNull;
+      final resumenFacturaNode = document.findAllElements('ResumenFactura ').firstOrNull;
+      final lineas = document.findAllElements('LineaDetalle');
 
 
       Map<String,dynamic>? emisorMap = obtenerDatosEmisor(emisor);
@@ -317,39 +325,83 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
       if (!existeRazonSocial){
         await onReceptorNoExiste(receptorMap);
+        return;
       }
 
-      
+      FacturaCompra? tempFacturaCompra = FacturaCompra.fromJson(factura(facturaNode,emisorMap,receptorMap,resumenFacturaNode));
+      FacturaCompra? facturaCompra = tempFacturaCompra.copyWith(detalle: detalleFactura(lineas));
+
+      await _compraRepository.guardarCompra(facturaCompra);
 
   }
 
-  Map<String,dynamic>? factura(XmlElement? document){
-    final resumentFactura = document?.findAllElements('ResumenFactura').firstOrNull;
+  Map<String,dynamic> factura(XmlElement? encabezado, Map<String, dynamic>? emisor, Map<String,dynamic>? receptor, XmlElement? resumenFactura){
       return {
-        'clave': document?.findAllElements('Clave').firstOrNull?.innerText ?? '',
-        'numero_consecutivo': document?.findAllElements('NumeroConsecutivo').firstOrNull?.innerText ?? '',
-        'fecha_emision': document?.findAllElements('FechaEmision').firstOrNull?.innerText ?? '',
-        'proveedor_sistemas': document?.findAllElements('ProveedorSistemas').firstOrNull?.innerText ?? '',
-        'codigo_actividad_emisor': document?.findAllElements('CodigoActividadEmisor').firstOrNull?.innerText ?? '',
-        'codigo_actividad_receptor': document?.findAllElements('CodigoActividadReceptor').firstOrNull?.innerText ?? '',
-        'emisor_identificacion': document?.findAllElements('Emisor').firstOrNull?.findAllElements('Identificacion').firstOrNull?.findAllElements('Numero').firstOrNull?.innerText ?? '',
-        'emisor_nombre': document?.findAllElements('Emisor').firstOrNull?.findAllElements('Nombre').firstOrNull?.innerText ?? '',
-        'emisor_nombre_comercial': document?.findAllElements('Emisor').firstOrNull?.findAllElements('NombreComercial').firstOrNull?.innerText ?? '',
-        'receptor_identificacion': document?.findAllElements('Receptor').firstOrNull?.findAllElements('Identificacion').firstOrNull?.findAllElements('Numero').firstOrNull?.innerText ?? '',
-        'receptor_nombre': document?.findAllElements('Receptor').firstOrNull?.findAllElements('Nombre').firstOrNull?.innerText ?? '',
-        'receptor_nombre_comercial': document?.findAllElements('Receptor').firstOrNull?.findAllElements('NombreComercial').firstOrNull?.innerText ?? '',
-        'condicion_venta': document?.findAllElements('CondicionVenta').firstOrNull?.innerText ?? '',
-        'condicion_venta_otros': document?.findAllElements('CondicionVentaOtros').firstOrNull?.innerText ?? '',
-        'plazo_credito': document?.findAllElements('PlazoCredito').firstOrNull?.innerText ?? '',
-        'moneda': resumentFactura?.findAllElements('CodigoTipoMoneda').firstOrNull?.findAllElements('CodigoMoneda').firstOrNull?.innerText ?? '',
-        'tipo_cambio': resumentFactura?.findAllElements('CodigoTipoMoneda').firstOrNull?.findAllElements('TipoCambio').firstOrNull?.innerText ?? '',
-        'total_gravado': resumentFactura?.findAllElements('TotalGravado').firstOrNull?.innerText ?? 0,
-        'total_venta': resumentFactura?.findAllElements('TotalVenta').firstOrNull?.innerText ?? 0,
-        'total_venta_neta': resumentFactura?.findAllElements('TotalVentaNeta').firstOrNull?.innerText ?? 0,
-        'total_impuesto': resumentFactura?.findAllElements('TotalImpuesto').firstOrNull?.innerText ?? 0,
-        'total_comprobante': resumentFactura?.findAllElements('TotalComprobante').firstOrNull?.innerText ?? 0,
+        'clave': encabezado?.findAllElements('Clave').firstOrNull?.innerText ?? '',
+        'numero_consecutivo': encabezado?.findAllElements('NumeroConsecutivo').firstOrNull?.innerText ?? '',
+        'fecha_emision': encabezado?.findAllElements('FechaEmision').firstOrNull?.innerText ?? '',
+        'proveedor_sistemas': encabezado?.findAllElements('ProveedorSistemas').firstOrNull?.innerText ?? '',
+        'codigo_actividad_emisor': encabezado?.findAllElements('CodigoActividadEmisor').firstOrNull?.innerText ?? '',
+        'codigo_actividad_receptor': encabezado?.findAllElements('CodigoActividadReceptor').firstOrNull?.innerText ?? '',
+        'emisor_identificacion': emisor?['identificacion_emisor'],
+        'emisor_nombre': emisor?['nombre_emisor'],
+        'emisor_nombre_comercial': emisor?['nombre_emisor'],
+        'receptor_identificacion': receptor?['identificacion_receptor'],
+        'receptor_nombre': receptor?['nombre_receptor'],
+        'receptor_nombre_comercial': receptor?['receptor_nombre_comercial'],
+        'condicion_venta': resumenFactura?.findAllElements('CondicionVenta').firstOrNull?.innerText ?? '',
+        'condicion_venta_otros': resumenFactura?.findAllElements('CondicionVentaOtros').firstOrNull?.innerText ?? '',
+        'plazo_credito': resumenFactura?.findAllElements('PlazoCredito').firstOrNull?.innerText ?? '',
+        'moneda': resumenFactura?.findAllElements('CodigoTipoMoneda').firstOrNull?.findAllElements('CodigoMoneda').firstOrNull?.innerText ?? '',
+        'tipo_cambio': resumenFactura?.findAllElements('CodigoTipoMoneda').firstOrNull?.findAllElements('TipoCambio').firstOrNull?.innerText ?? '',
+        'total_gravado': resumenFactura?.findAllElements('TotalGravado').firstOrNull?.innerText ?? 0,
+        'total_venta': resumenFactura?.findAllElements('TotalVenta').firstOrNull?.innerText ?? 0,
+        'total_venta_neta': resumenFactura?.findAllElements('TotalVentaNeta').firstOrNull?.innerText ?? 0,
+        'total_impuesto': resumenFactura?.findAllElements('TotalImpuesto').firstOrNull?.innerText ?? 0,
+        'total_comprobante': resumenFactura?.findAllElements('TotalComprobante').firstOrNull?.innerText ?? 0,
       };
+  }
+  
+  List<DetalleFacturaCompra> detalleFactura (Iterable<XmlElement> lineas){
+    List<DetalleFacturaCompra> detalle = [];
 
+    for (final linea in lineas) {
+      detalle.add(
+        DetalleFacturaCompra(
+          numeroLinea: int.tryParse(
+            linea.getElement('NumeroLinea')?.innerText ?? '',
+          ),
+          codigoCabys: linea.getElement('CodigoCABYS')?.innerText,
+          detalle: linea.getElement('Detalle')?.innerText,
+          cantidad: double.tryParse(
+            linea.getElement('Cantidad')?.innerText ?? '',
+          ),
+          unidadMedida: linea.getElement('UnidadMedida')?.innerText,
+          precioUnitario: double.tryParse(
+            linea.getElement('PrecioUnitario')?.innerText ?? '',
+          ),
+          montoTotal: double.tryParse(
+            linea.getElement('MontoTotal')?.innerText ?? '',
+          ),
+          subtotal: double.tryParse(
+            linea.getElement('SubTotal')?.innerText ?? '',
+          ),
+          baseImponible: double.tryParse(
+            linea.getElement('BaseImponible')?.innerText ?? '',
+          ),
+          impuesto: double.tryParse(
+            linea.getElement('Impuesto')?.getElement('Monto')?.innerText ?? '',
+          ),
+          tarifaImpuesto: double.tryParse(
+            linea.getElement('Impuesto')?.getElement('Tarifa')?.innerText ?? '',
+          ),
+          montoTotalLinea: double.tryParse(
+            linea.getElement('MontoTotalLinea')?.innerText ?? '',
+          ),
+        ),
+      );
+    }
+    return detalle;
   }
 
   Map<String,dynamic>? obtenerDatosEmisor(XmlElement? emisor){
@@ -380,8 +432,8 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       if (receptor==null) return null;
 
       //Datos del proveedor
-      final nombreReceptor = receptor.findElements('NombreComercial').firstOrNull?.innerText ??
-        receptor.findElements('Nombre').firstOrNull?.innerText;
+      final nombreReceptor = receptor.findElements('Nombre').firstOrNull?.innerText ;
+      final nombreComercial =  receptor.findElements('NombreComercial').firstOrNull?.innerText;
 
       final identificacionReceptor = receptor.findElements('Identificacion').firstOrNull?.findElements('Numero').firstOrNull?.innerText;
 
@@ -392,7 +444,8 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       final correoReceptor = receptor.findElements('CorreoElectronico').firstOrNull?.innerText;
 
       return {
-        'nombre_receptor': nombreReceptor,
+        'nombre_receptor': nombreReceptor ?? nombreComercial,
+        'receptor_nombre_comercial': nombreComercial ?? nombreReceptor,
         'identificacion_receptor': identificacionReceptor,
         'tipo_identificacion_receptor': tipoIdentificacionReceptor,
         'telefono_receptor': telefonoReceptor,

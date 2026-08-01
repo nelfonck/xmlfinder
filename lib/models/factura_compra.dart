@@ -4,35 +4,38 @@
 //     final proveedor = proveedorFromJson(jsonString);
 import 'package:intl/intl.dart';
 import 'dart:convert';
+import 'detallefacturacompra.dart';
+
 FacturaCompra facturaFromJson(String str) => FacturaCompra.fromJson(json.decode(str));
 
 String facturaToJson(FacturaCompra data) => json.encode(data.toJson());
 
 class FacturaCompra{
-  int? id;
-  String? clave;
-  String? numeroConsecutivo;
-  DateTime? fechaEmision;
-  String? proveedorSistemas;
-  String? codigoActividadEmisor;
-  String? codigoActividadReceptor;
-  String? emisorIdentificacion;
-  String? emisorNombre;
-  String? emisorNombreComercial;
-  String? receptorIdentificacion;
-  String? receptorNombre;
-  String? receptorNombreComercial;
-  String? condicionVenta;
-  String? condicionVentaOtros;
-  int? plazoCredito;
-  String? moneda;
-  double? tipoCambio;
-  double? totalGravado;
-  double? totalVenta;
-  double? totalVentaNeta;
-  double? totalImpuesto;
-  double? totalComprobante;
-  DateTime? fechaRegistro;
+  final int? id;
+  final String? clave;
+  final String? numeroConsecutivo;
+  final DateTime? fechaEmision;
+  final String? proveedorSistemas;
+  final String? codigoActividadEmisor;
+  final String? codigoActividadReceptor;
+  final String? emisorIdentificacion;
+  final String? emisorNombre;
+  final String? emisorNombreComercial;
+  final String? receptorIdentificacion;
+  final String? receptorNombre;
+  final String? receptorNombreComercial;
+  final String? condicionVenta;
+  final String? condicionVentaOtros;
+  final int? plazoCredito;
+  final String? moneda;
+  final double? tipoCambio;
+  final double? totalGravado;
+  final double? totalVenta;
+  final double? totalVentaNeta;
+  final double? totalImpuesto;
+  final double? totalComprobante;
+  final DateTime? fechaRegistro;
+  final List<DetalleFacturaCompra>? detalle;
 
   FacturaCompra({
     this.id,
@@ -59,7 +62,70 @@ class FacturaCompra{
     this.totalImpuesto,
     this.totalComprobante,
     this.fechaRegistro,
+    this.detalle
   });
+
+FacturaCompra copyWith({
+  int? id,
+  String? clave,
+  String? numeroConsecutivo,
+  DateTime? fechaEmision,
+  String? proveedorSistemas,
+  String? codigoActividadEmisor,
+  String? codigoActividadReceptor,
+  String? emisorIdentificacion,
+  String? emisorNombre,
+  String? emisorNombreComercial,
+  String? receptorIdentificacion,
+  String? receptorNombre,
+  String? receptorNombreComercial,
+  String? condicionVenta,
+  String? condicionVentaOtros,
+  int? plazoCredito,
+  String? moneda,
+  double? tipoCambio,
+  double? totalGravado,
+  double? totalVenta,
+  double? totalVentaNeta,
+  double? totalImpuesto,
+  double? totalComprobante,
+  DateTime? fechaRegistro,
+  List<DetalleFacturaCompra>? detalle,
+}) =>
+    FacturaCompra(
+      id: id ?? this.id,
+      clave: clave ?? this.clave,
+      numeroConsecutivo: numeroConsecutivo ?? this.numeroConsecutivo,
+      fechaEmision: fechaEmision ?? this.fechaEmision,
+      proveedorSistemas: proveedorSistemas ?? this.proveedorSistemas,
+      codigoActividadEmisor:
+          codigoActividadEmisor ?? this.codigoActividadEmisor,
+      codigoActividadReceptor:
+          codigoActividadReceptor ?? this.codigoActividadReceptor,
+      emisorIdentificacion:
+          emisorIdentificacion ?? this.emisorIdentificacion,
+      emisorNombre: emisorNombre ?? this.emisorNombre,
+      emisorNombreComercial:
+          emisorNombreComercial ?? this.emisorNombreComercial,
+      receptorIdentificacion:
+          receptorIdentificacion ?? this.receptorIdentificacion,
+      receptorNombre: receptorNombre ?? this.receptorNombre,
+      receptorNombreComercial:
+          receptorNombreComercial ?? this.receptorNombreComercial,
+      condicionVenta: condicionVenta ?? this.condicionVenta,
+      condicionVentaOtros:
+          condicionVentaOtros ?? this.condicionVentaOtros,
+      plazoCredito: plazoCredito ?? this.plazoCredito,
+      moneda: moneda ?? this.moneda,
+      tipoCambio: tipoCambio ?? this.tipoCambio,
+      totalGravado: totalGravado ?? this.totalGravado,
+      totalVenta: totalVenta ?? this.totalVenta,
+      totalVentaNeta: totalVentaNeta ?? this.totalVentaNeta,
+      totalImpuesto: totalImpuesto ?? this.totalImpuesto,
+      totalComprobante: totalComprobante ?? this.totalComprobante,
+      fechaRegistro: fechaRegistro ?? this.fechaRegistro,
+      detalle: detalle ?? this.detalle,
+    );
 
   factory FacturaCompra.fromJson(Map<String, dynamic> json) => FacturaCompra(
     id: json["id"] as int?,
@@ -117,6 +183,13 @@ class FacturaCompra{
     fechaRegistro: json["fecha_registro"] != null
         ? DateTime.tryParse(json["fecha_registro"].toString())
         : null,
+    detalle: json["detalle"] == null
+        ? []
+        : List<DetalleFacturaCompra>.from(
+            json["detalle"].map(
+              (x) => DetalleFacturaCompra.fromJson(x),
+            ),
+          ),
   );
 
 Map<String, dynamic> toJson() => {
@@ -148,6 +221,8 @@ Map<String, dynamic> toJson() => {
   "fecha_registro": fechaRegistro == null
     ? null
     : DateFormat('yyyy-MM-dd HH:mm:ss').format(fechaRegistro!),
+  "detalle": detalle == null
+      ? []
+      : List<dynamic>.from(detalle!.map((x) => x.toJson())),
 };
-
 }
