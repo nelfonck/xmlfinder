@@ -15,7 +15,6 @@ class DetalleFacturaCompra {
     String? codigoCabys;
     String? codigoComercialTipo;
     String? codigoComercial;
-    String? detalle;
     double? cantidad;
     String? unidadMedida;
     String? unidadMedidaComercial;
@@ -35,7 +34,6 @@ class DetalleFacturaCompra {
         this.codigoCabys,
         this.codigoComercialTipo,
         this.codigoComercial,
-        this.detalle,
         this.cantidad,
         this.unidadMedida,
         this.unidadMedidaComercial,
@@ -76,7 +74,6 @@ class DetalleFacturaCompra {
             codigoCabys: codigoCabys ?? this.codigoCabys,
             codigoComercialTipo: codigoComercialTipo ?? this.codigoComercialTipo,
             codigoComercial: codigoComercial ?? this.codigoComercial,
-            detalle: detalle ?? this.detalle,
             cantidad: cantidad ?? this.cantidad,
             unidadMedida: unidadMedida ?? this.unidadMedida,
             unidadMedidaComercial: unidadMedidaComercial ?? this.unidadMedidaComercial,
@@ -97,7 +94,6 @@ class DetalleFacturaCompra {
         codigoCabys: json["codigo_cabys"],
         codigoComercialTipo: json["codigo_comercial_tipo"],
         codigoComercial: json["codigo_comercial"],
-        detalle: json["detalle"],
         cantidad: json["cantidad"]?.toDouble(),
         unidadMedida: json["unidad_medida"],
         unidadMedidaComercial: json["unidad_medida_comercial"],
@@ -118,7 +114,6 @@ class DetalleFacturaCompra {
         "codigo_cabys": codigoCabys,
         "codigo_comercial_tipo": codigoComercialTipo,
         "codigo_comercial": codigoComercial,
-        "detalle": detalle,
         "cantidad": cantidad,
         "unidad_medida": unidadMedida,
         "unidad_medida_comercial": unidadMedidaComercial,

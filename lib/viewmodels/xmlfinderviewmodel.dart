@@ -372,7 +372,6 @@ class Xmlfinderviewmodel extends ChangeNotifier{
             linea.getElement('NumeroLinea')?.innerText ?? '',
           ),
           codigoCabys: linea.getElement('CodigoCABYS')?.innerText,
-          detalle: linea.getElement('Detalle')?.innerText,
           cantidad: double.tryParse(
             linea.getElement('Cantidad')?.innerText ?? '',
           ),
