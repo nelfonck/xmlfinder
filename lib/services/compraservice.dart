@@ -15,6 +15,7 @@ class CompraService {
         headers: Preferencias.headers
       );
 
+
       final body = jsonDecode(resp.body);
 
       if (resp.statusCode != 200) {
@@ -23,8 +24,7 @@ class CompraService {
         );
       }
 
-      final  decoded = body['data'];
-      return decoded;
+      return body;
 
     } catch (e) {
       throw Exception(e.toString());

@@ -240,7 +240,7 @@ class _XmlFinderViewState extends State<XmlFinderView> {
                               }
                               //Guardar factura en fase de datos
                               if (rutaCarpeta!=null){
-                                await model.guardarFactura(rutaCarpeta, correo,
+                                final resp = await model.guardarFactura(rutaCarpeta, correo,
                                   onEmisorNoExiste: (emisor) async{
                                     await showDialog(context: context, builder: (_) => NuevoProveedorView(emisor: emisor,));
                                   },onReceptorNoExiste: (receptor) async{
@@ -248,6 +248,13 @@ class _XmlFinderViewState extends State<XmlFinderView> {
                                       Mensajes.warning(context, 'Razon social no encontrada, registre lo primero antes de continuar');
                                     }
                                 },);
+                                if (resp!=null){
+                                  if (resp['statusCode']==200){
+                                    if (context.mounted){
+                                      Mensajes.exito(context, resp['message']);
+                                    }
+                                  }
+                                }
                               }
                             } catch (e) {
                               if (context.mounted){

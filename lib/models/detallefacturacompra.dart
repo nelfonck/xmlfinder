@@ -12,6 +12,7 @@ class DetalleFacturaCompra {
     int? id;
     int? facturaId;
     int? numeroLinea;
+    String? detalle;
     String? codigoCabys;
     String? codigoComercialTipo;
     String? codigoComercial;
@@ -31,6 +32,7 @@ class DetalleFacturaCompra {
         this.id,
         this.facturaId,
         this.numeroLinea,
+        this.detalle,
         this.codigoCabys,
         this.codigoComercialTipo,
         this.codigoComercial,
@@ -51,10 +53,10 @@ class DetalleFacturaCompra {
         int? id,
         int? facturaId,
         int? numeroLinea,
+        String? detalle,
         String? codigoCabys,
         String? codigoComercialTipo,
         String? codigoComercial,
-        String? detalle,
         double? cantidad,
         String? unidadMedida,
         String? unidadMedidaComercial,
@@ -71,6 +73,7 @@ class DetalleFacturaCompra {
             id: id ?? this.id,
             facturaId: facturaId ?? this.facturaId,
             numeroLinea: numeroLinea ?? this.numeroLinea,
+            detalle: detalle ?? this.detalle,
             codigoCabys: codigoCabys ?? this.codigoCabys,
             codigoComercialTipo: codigoComercialTipo ?? this.codigoComercialTipo,
             codigoComercial: codigoComercial ?? this.codigoComercial,
@@ -91,6 +94,7 @@ class DetalleFacturaCompra {
         id: json["id"],
         facturaId: json["factura_id"],
         numeroLinea: json["numero_linea"],
+        detalle: json["detalle"],
         codigoCabys: json["codigo_cabys"],
         codigoComercialTipo: json["codigo_comercial_tipo"],
         codigoComercial: json["codigo_comercial"],
@@ -111,6 +115,7 @@ class DetalleFacturaCompra {
         "id": id,
         "factura_id": facturaId,
         "numero_linea": numeroLinea,
+        "detalle": detalle,
         "codigo_cabys": codigoCabys,
         "codigo_comercial_tipo": codigoComercialTipo,
         "codigo_comercial": codigoComercial,

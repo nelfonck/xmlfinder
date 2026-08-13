@@ -158,27 +158,27 @@ FacturaCompra copyWith({
 
     tipoCambio: json["tipo_cambio"] == null
         ? null
-        : (json["tipo_cambio"] as num).toDouble(),
+        : double.tryParse(json["tipo_cambio"].toString()),
 
     totalGravado: json["total_gravado"] == null
         ? null
-        : (json["total_gravado"] as num).toDouble(),
+        : double.tryParse(json["total_gravado"].toString()),
 
     totalVenta: json["total_venta"] == null
         ? null
-        : (json["total_venta"] as num).toDouble(),
+        : double.tryParse(json["total_venta"].toString()),
 
     totalVentaNeta: json["total_venta_neta"] == null
         ? null
-        : (json["total_venta_neta"] as num).toDouble(),
+        : double.tryParse(json["total_venta_neta"].toString()),
 
     totalImpuesto: json["total_impuesto"] == null
         ? null
-        : (json["total_impuesto"] as num).toDouble(),
+        : double.tryParse(json["total_impuesto"].toString()),
 
     totalComprobante: json["total_comprobante"] == null
         ? null
-        : (json["total_comprobante"] as num).toDouble(),
+        : double.tryParse(json["total_comprobante"].toString()),
 
     fechaRegistro: json["fecha_registro"] != null
         ? DateTime.tryParse(json["fecha_registro"].toString())

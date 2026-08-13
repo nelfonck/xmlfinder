@@ -287,7 +287,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     return null;
   }
 
-  Future<void> guardarFactura(String ruta, CorreoFactura correo,{
+  Future<Map<String,dynamic>?> guardarFactura(String ruta, CorreoFactura correo,{
     required Future<void> Function(Map<String,dynamic> emisor) onEmisorNoExiste,
     required Future<void> Function(Map<String,dynamic> receptor) onReceptorNoExiste,
   }) async{
@@ -298,8 +298,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
 
       final emisor = document.findAllElements('Emisor').firstOrNull;
       final receptor = document.findAllElements('Receptor').firstOrNull;
-      final facturaNode = document.findAllElements('FacturaElectronica ').firstOrNull;
-      final resumenFacturaNode = document.findAllElements('ResumenFactura ').firstOrNull;
+      final resumenFacturaNode = document.findAllElements('ResumenFactura').firstOrNull;
       final lineas = document.findAllElements('LineaDetalle');
 
 
@@ -318,40 +317,41 @@ class Xmlfinderviewmodel extends ChangeNotifier{
       Map<String,dynamic>? receptorMap = obtenerDatosReceptor(receptor);
 
       if (receptorMap==null){
-        throw Exception('No fue posible obtener los datos del emisor: XmlDocument is null');
+        throw Exception('No fue posible obtener los datos del receptor: XmlDocument is null');
       }
 
       bool existeRazonSocial = await existeReceptor(receptorMap['identificacion_receptor']);
 
       if (!existeRazonSocial){
         await onReceptorNoExiste(receptorMap);
-        return;
+        return null;
       }
 
-      FacturaCompra? tempFacturaCompra = FacturaCompra.fromJson(factura(facturaNode,emisorMap,receptorMap,resumenFacturaNode));
+      FacturaCompra tempFacturaCompra = FacturaCompra.fromJson(factura(document,emisorMap,receptorMap,resumenFacturaNode));
       FacturaCompra? facturaCompra = tempFacturaCompra.copyWith(detalle: detalleFactura(lineas));
 
-      await _compraRepository.guardarCompra(facturaCompra);
+      final resp = await _compraRepository.guardarCompra(facturaCompra);
 
+      return resp;
   }
 
-  Map<String,dynamic> factura(XmlElement? encabezado, Map<String, dynamic>? emisor, Map<String,dynamic>? receptor, XmlElement? resumenFactura){
+  Map<String,dynamic> factura(XmlDocument document, Map<String, dynamic>? emisor, Map<String,dynamic>? receptor, XmlElement? resumenFactura){
       return {
-        'clave': encabezado?.findAllElements('Clave').firstOrNull?.innerText ?? '',
-        'numero_consecutivo': encabezado?.findAllElements('NumeroConsecutivo').firstOrNull?.innerText ?? '',
-        'fecha_emision': encabezado?.findAllElements('FechaEmision').firstOrNull?.innerText ?? '',
-        'proveedor_sistemas': encabezado?.findAllElements('ProveedorSistemas').firstOrNull?.innerText ?? '',
-        'codigo_actividad_emisor': encabezado?.findAllElements('CodigoActividadEmisor').firstOrNull?.innerText ?? '',
-        'codigo_actividad_receptor': encabezado?.findAllElements('CodigoActividadReceptor').firstOrNull?.innerText ?? '',
+        'clave': document.findAllElements('Clave').firstOrNull?.innerText ?? '',
+        'numero_consecutivo': document.findAllElements('NumeroConsecutivo').firstOrNull?.innerText ?? '',
+        'fecha_emision': document.findAllElements('FechaEmision').firstOrNull?.innerText ?? '',
+        'proveedor_sistemas': document.findAllElements('ProveedorSistemas').firstOrNull?.innerText ?? '',
+        'codigo_actividad_emisor': document.findAllElements('CodigoActividadEmisor').firstOrNull?.innerText ?? '',
+        'codigo_actividad_receptor': document.findAllElements('CodigoActividadReceptor').firstOrNull?.innerText ?? '',
         'emisor_identificacion': emisor?['identificacion_emisor'],
         'emisor_nombre': emisor?['nombre_emisor'],
         'emisor_nombre_comercial': emisor?['nombre_emisor'],
         'receptor_identificacion': receptor?['identificacion_receptor'],
         'receptor_nombre': receptor?['nombre_receptor'],
         'receptor_nombre_comercial': receptor?['receptor_nombre_comercial'],
-        'condicion_venta': resumenFactura?.findAllElements('CondicionVenta').firstOrNull?.innerText ?? '',
-        'condicion_venta_otros': resumenFactura?.findAllElements('CondicionVentaOtros').firstOrNull?.innerText ?? '',
-        'plazo_credito': resumenFactura?.findAllElements('PlazoCredito').firstOrNull?.innerText ?? '',
+        'condicion_venta': document.findAllElements('CondicionVenta').firstOrNull?.innerText ?? '',
+        'condicion_venta_otros': document.findAllElements('CondicionVentaOtros').firstOrNull?.innerText ?? '',
+        'plazo_credito': document.findAllElements('PlazoCredito').firstOrNull?.innerText ?? '',
         'moneda': resumenFactura?.findAllElements('CodigoTipoMoneda').firstOrNull?.findAllElements('CodigoMoneda').firstOrNull?.innerText ?? '',
         'tipo_cambio': resumenFactura?.findAllElements('CodigoTipoMoneda').firstOrNull?.findAllElements('TipoCambio').firstOrNull?.innerText ?? '',
         'total_gravado': resumenFactura?.findAllElements('TotalGravado').firstOrNull?.innerText ?? 0,
@@ -375,7 +375,12 @@ class Xmlfinderviewmodel extends ChangeNotifier{
           cantidad: double.tryParse(
             linea.getElement('Cantidad')?.innerText ?? '',
           ),
+          detalle: linea.getElement('Detalle')?.innerText ?? '',
+          codigoComercialTipo: linea.getElement('CodigoComercial')?.getElement('Tipo')?.innerText ?? '',
+          codigoComercial: linea.getElement('CodigoComercial')?.getElement('Codigo')?.innerText ?? '',
           unidadMedida: linea.getElement('UnidadMedida')?.innerText,
+          unidadMedidaComercial: linea.getElement('UnidadMedidaComercial')?.innerText,
+          tipoTransaccion: linea.getElement('TipoTransaccion')?.innerText,
           precioUnitario: double.tryParse(
             linea.getElement('PrecioUnitario')?.innerText ?? '',
           ),
