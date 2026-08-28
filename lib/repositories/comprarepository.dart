@@ -9,5 +9,9 @@ class CompraRepository {
     return _service.guardarCompra(factura);
   }
 
+  Future<Map<String,dynamic>> getCompras() async {
+    return _service.getCompras();
+  }
+
 
 }

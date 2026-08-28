@@ -70,6 +70,13 @@ class _XmlFinderViewState extends State<XmlFinderView> {
                 },
               ),
               menuButton(
+                icon: Icons.shop, 
+                text: 'Compras', 
+                onPressed: () {
+                  Navigator.pushNamed(context, 'compras');
+                },
+              ),
+              menuButton(
                 icon: Icons.file_download, 
                 text: 'Descargas xml', 
                 onPressed: () {

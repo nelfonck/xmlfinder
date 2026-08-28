@@ -1,4 +1,5 @@
 import 'package:comprassj/services/preferencias.dart';
+import 'package:comprassj/views/comprasview.dart';
 import 'package:comprassj/views/configuracionview.dart';
 import 'package:comprassj/views/nuevarazonsocialview.dart';
 import 'package:comprassj/views/nuevatiendaview.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
         'razon_social': (context) => const NuevaRazonSocialView(),
         'nueva_tienda': (context) => const NuevaTiendaView(),
         'nuevo_proveedor': (context) => const NuevoProveedorView(),
+        'compras': (context) => const ComprasView(),
       },
       home: const XmlFinderView(),
     );
