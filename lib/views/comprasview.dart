@@ -1,3 +1,4 @@
+import 'package:comprassj/enums/estado_recepcion.dart';
 import 'package:comprassj/viewmodels/comprasviewmodel.dart';
 import 'package:comprassj/widgets/fondodegradado.dart';
 import 'package:comprassj/widgets/modelready.dart';
@@ -11,7 +12,7 @@ class ComprasView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formatoMoneda = NumberFormat('#,##0.00', 'es_CR');
-
+    
     return ChangeNotifierProvider(
       create: (_) => ComprasViewModel(),
       child: ModelReady<ComprasViewModel>(
@@ -28,21 +29,45 @@ class ComprasView extends StatelessWidget {
               ),
               body: Expanded(
                 child: Column(
-                  children: [
+                  children: [ 
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text('Estado recepcion: '),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DropdownButton<EstadoRecepcion>(
+                            value: model.estadoSeleccionado,
+                            hint: const Text('Seleccione un estado'),
+                            items:EstadoRecepcion.values.map((estado){
+                              return DropdownMenuItem<EstadoRecepcion>(
+                                value: estado,
+                                child:Text(' ${estado.name}'),
+                              );
+                            }).toList(), 
+                            onChanged: (value){
+                              if (value!=null){
+                                model.setEstado(value);      
+                              }
+                            }
+                          ),
+                        )
+                      ],
+                    ),
                     Expanded(
                       child: ListView.builder(
                         itemCount: model.facturas.length,
                         itemBuilder: ((context, index) {
                           return Card(
                             child: ListTile(
-
                               title: Row(
                                 children: [
                                   // COLUMNA 2 - PROVEEDOR
                                   Expanded(
                                     flex: 3,
                                     child: Text(
-                                      model.facturas[index].emisorNombreComercial ?? 'Sin proveedor',
+                                      'Emisor -> ${model.facturas[index].emisorNombreComercial}',
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -56,8 +81,7 @@ class ComprasView extends StatelessWidget {
                                     ),
                                   ),
 
-
-                                  // COLUMNA 3 - FECHA
+                                  // COLUMNA 3 - FECHA  
                                   Expanded(
                                     flex: 1,
                                     child: Text(
@@ -76,7 +100,7 @@ class ComprasView extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    model.facturas[index].receptorNombreComercial ?? 'Sin cliente',
+                                    'Receptor -> ${model.facturas[index].receptorNombreComercial}',
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Row(

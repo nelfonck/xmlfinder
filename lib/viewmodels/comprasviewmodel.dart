@@ -1,3 +1,4 @@
+import 'package:comprassj/enums/estado_recepcion.dart';
 import 'package:comprassj/models/factura_compra.dart';
 import 'package:comprassj/repositories/comprarepository.dart';
 import 'package:comprassj/services/compraservice.dart';
@@ -7,7 +8,8 @@ class ComprasViewModel extends ChangeNotifier{
   List<FacturaCompra> facturas = [];
   final CompraRepository _compraRepository = CompraRepository(CompraService());
   bool _disposed = false;
-
+  EstadoRecepcion? estadoSeleccionado = EstadoRecepcion.pendiente;
+  
   @override
   void dispose() {
     _disposed = true;
@@ -16,6 +18,11 @@ class ComprasViewModel extends ChangeNotifier{
 
   Future<void> init()async{
     await getCompras();
+  }
+
+  void setEstado(EstadoRecepcion estado){
+    estadoSeleccionado = estado;
+    _safeNotifyListeners();
   }
 
   Future<Map<String,dynamic>?> getCompras()async{

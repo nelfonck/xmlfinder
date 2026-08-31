@@ -1,0 +1,4 @@
+enum EstadoRecepcion {
+  pendiente,
+  recepcionado
+}
