@@ -43,7 +43,7 @@ class ComprasView extends StatelessWidget {
                             items:EstadoRecepcion.values.map((estado){
                               return DropdownMenuItem<EstadoRecepcion>(
                                 value: estado,
-                                child:Text(' ${estado.name}'),
+                                child:Text(' ${estado.descripcion}'),
                               );
                             }).toList(), 
                             onChanged: (value){
@@ -105,6 +105,11 @@ class ComprasView extends StatelessWidget {
                                   ),
                                   Row(
                                     children: [
+                                      Text('Estado : ${EstadoRecepcion.desdeCodigo(model.facturas[index].estadoRecepcion!) ?.descripcion ?? ''}',
+                                      style: TextStyle(
+                                        color: EstadoRecepcion.desdeCodigo(model.facturas[index].estadoRecepcion!)?.color,
+                                        fontWeight: FontWeight.bold
+                                        ), ),
                                       Spacer(),
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.end,

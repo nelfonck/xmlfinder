@@ -35,6 +35,7 @@ class FacturaCompra{
   final double? totalImpuesto;
   final double? totalComprobante;
   final DateTime? fechaRegistro;
+  final int? estadoRecepcion;
   final List<DetalleFacturaCompra>? detalle;
 
   FacturaCompra({
@@ -62,6 +63,7 @@ class FacturaCompra{
     this.totalImpuesto,
     this.totalComprobante,
     this.fechaRegistro,
+    this.estadoRecepcion,
     this.detalle
   });
 
@@ -90,6 +92,7 @@ FacturaCompra copyWith({
   double? totalImpuesto,
   double? totalComprobante,
   DateTime? fechaRegistro,
+  int? estadoRecepcion,
   List<DetalleFacturaCompra>? detalle,
 }) =>
     FacturaCompra(
@@ -124,6 +127,7 @@ FacturaCompra copyWith({
       totalImpuesto: totalImpuesto ?? this.totalImpuesto,
       totalComprobante: totalComprobante ?? this.totalComprobante,
       fechaRegistro: fechaRegistro ?? this.fechaRegistro,
+      estadoRecepcion: estadoRecepcion ?? this.estadoRecepcion,
       detalle: detalle ?? this.detalle,
     );
 
@@ -183,6 +187,7 @@ FacturaCompra copyWith({
     fechaRegistro: json["fecha_registro"] != null
         ? DateTime.tryParse(json["fecha_registro"].toString())
         : null,
+    estadoRecepcion: json["estado_recepcion"] as int?,
     detalle: json["detalle"] == null
         ? []
         : List<DetalleFacturaCompra>.from(
@@ -221,6 +226,7 @@ Map<String, dynamic> toJson() => {
   "fecha_registro": fechaRegistro == null
     ? null
     : DateFormat('yyyy-MM-dd HH:mm:ss').format(fechaRegistro!),
+  "estado_recepcion": estadoRecepcion,
   "detalle": detalle == null
       ? []
       : List<dynamic>.from(detalle!.map((x) => x.toJson())),

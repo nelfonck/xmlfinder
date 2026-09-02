@@ -8,7 +8,7 @@ class ComprasViewModel extends ChangeNotifier{
   List<FacturaCompra> facturas = [];
   final CompraRepository _compraRepository = CompraRepository(CompraService());
   bool _disposed = false;
-  EstadoRecepcion? estadoSeleccionado = EstadoRecepcion.pendiente;
+  EstadoRecepcion? estadoSeleccionado = EstadoRecepcion.esperadescarga;
   
   @override
   void dispose() {
