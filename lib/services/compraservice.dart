@@ -31,9 +31,11 @@ class CompraService {
     }
   }
 
-  Future<Map<String,dynamic>> getCompras()async{
+  Future<Map<String,dynamic>> getCompras(int? estadoRecepcion)async{
     try {
-      final url = Uri.http(Preferencias.baseUrl, '/comprassjapi/public/api/compras');
+      final url = Uri.http(Preferencias.baseUrl, '/comprassjapi/public/api/compras',{
+        'estado-recepcion': estadoRecepcion?.toString()
+      });
 
       final resp = await http.get(
         url,

@@ -17,7 +17,7 @@ class ComprasView extends StatelessWidget {
       create: (_) => ComprasViewModel(),
       child: ModelReady<ComprasViewModel>(
         onModelReady: (ComprasViewModel model) async{
-          await model.getCompras();
+          await model.init();
         },
         child: Consumer<ComprasViewModel>(
           builder: ((context, model, child) {
@@ -46,9 +46,10 @@ class ComprasView extends StatelessWidget {
                                 child:Text(' ${estado.descripcion}'),
                               );
                             }).toList(), 
-                            onChanged: (value){
+                            onChanged: (value)async{
                               if (value!=null){
-                                model.setEstado(value);      
+                                model.setEstado(value);    
+                                await model.getCompras();  
                               }
                             }
                           ),
@@ -130,6 +131,19 @@ class ComprasView extends StatelessWidget {
                           );
                         })
                       )
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '🔄Próxima actualización: '
+                            '${model.tiempoRestante.inMinutes.toString().padLeft(2, '0')}:'
+                            '${(model.tiempoRestante.inSeconds % 60).toString().padLeft(2, '0')}',
+                          ),
+                        ),
+                      ],
                     )
                   ],
                 )
