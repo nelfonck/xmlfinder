@@ -137,6 +137,11 @@ class ComprasView extends StatelessWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(8.0),
+                          child: Text('Numero de registros: ${model.facturas.length}'),
+                        ),
+                        Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: Text(
                             '🔄Próxima actualización: '
                             '${model.tiempoRestante.inMinutes.toString().padLeft(2, '0')}:'
@@ -144,6 +149,10 @@ class ComprasView extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),
+                    Visibility(
+                      visible: model.cargando,
+                      child: LinearProgressIndicator()
                     )
                   ],
                 )

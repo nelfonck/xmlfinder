@@ -15,6 +15,7 @@ class ComprasViewModel extends ChangeNotifier{
   Timer? _timerContador;
   int refreshEveryMinutes = 1 ;
   Duration tiempoRestante = Duration();
+  bool cargando = false;
   
   @override
   void dispose() {
@@ -61,11 +62,21 @@ class ComprasViewModel extends ChangeNotifier{
   }
 
   Future<Map<String,dynamic>?> getCompras()async{
-    final result = await _compraRepository.getCompras(estadoSeleccionado?.codigo == 6 ? null : estadoSeleccionado?.codigo);
-    if (result['statusCode']==200){
-      facturas = result['compras'].map<FacturaCompra>((e) => FacturaCompra.fromJson(e)).toList();
+    try {
+      cargando = true;
       _safeNotifyListeners();
-      return result;
+
+      final result = await _compraRepository.getCompras(estadoSeleccionado?.codigo == 6 ? null : estadoSeleccionado?.codigo);
+      if (result['statusCode']==200){
+        facturas = result['compras'].map<FacturaCompra>((e) => FacturaCompra.fromJson(e)).toList();
+        cargando = false;
+        _safeNotifyListeners();
+        return result;
+      }
+    } catch (e) {
+      cargando = false;
+      _safeNotifyListeners();
+      rethrow;
     }
     return null;
   }
