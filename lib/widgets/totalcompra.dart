@@ -6,14 +6,14 @@ class TotalCompra extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(10),
+      //margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.symmetric(
-        horizontal: 25,
-        vertical: 20,
+        horizontal: 10,
+        vertical: 5,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFF1F232C),
-        borderRadius: BorderRadius.circular(16),
+        //color: Color(0xFF34373D),
+        //borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.15),
         ),
@@ -40,29 +40,32 @@ class TotalCompra extends StatelessWidget {
                 // SUB TOTAL
                 Row(
                   children: [
+                    Spacer(),
                     _iconoTotal(
                       Icons.shopping_cart_outlined,
                     ),
 
                     const SizedBox(width: 15),
 
-                    const Expanded(
-                      child: Text(
-                        'Sub total:',
-                        style: TextStyle(
-                          color: Color(0xFFB9BBC2),
-                          fontSize: 19,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    Text(
+                      'Sub total:',
+                      style: TextStyle(
+                        color: Color(0xFFB9BBC2),
+                        fontSize: 19,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
 
-                    const Text(
-                      '₡44.635,00',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
+                    SizedBox(
+                      width: 200,
+                      child: const Text(
+                        '₡44.635,00',
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ],
@@ -73,29 +76,32 @@ class TotalCompra extends StatelessWidget {
                 // TOTAL IMPUESTO
                 Row(
                   children: [
+                    Spacer(),
                     _iconoTotal(
                       Icons.description_outlined,
                     ),
 
                     const SizedBox(width: 15),
 
-                    const Expanded(
-                      child: Text(
-                        'Total impuesto:',
-                        style: TextStyle(
-                          color: Color(0xFFB9BBC2),
-                          fontSize: 19,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    Text(
+                      'Total impuesto:',
+                      style: TextStyle(
+                        color: Color(0xFFB9BBC2),
+                        fontSize: 19,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
 
-                    const Text(
-                      '₡2.826,58',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
+                    SizedBox(
+                      width: 200,
+                      child: const Text(
+                        '₡2.826,58',
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ],
@@ -106,29 +112,32 @@ class TotalCompra extends StatelessWidget {
                 // TOTAL COMPROBANTE
                 Row(
                   children: [
+                    Spacer(),
                     _iconoTotal(
                       Icons.account_balance_wallet_outlined,
                     ),
 
                     const SizedBox(width: 15),
 
-                    const Expanded(
-                      child: Text(
-                        'Total comprobante:',
-                        style: TextStyle(
-                          color: Color(0xFFB9BBC2),
-                          fontSize: 19,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    Text(
+                      'Total comprobante:',
+                      style: TextStyle(
+                        color: Color(0xFFB9BBC2),
+                        fontSize: 19,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
 
-                    const Text(
-                      '₡44.635,00',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
+                    SizedBox(
+                      width: 200,
+                      child: const Text(
+                        '₡44.635,00',
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ],
@@ -171,7 +180,7 @@ class TotalCompra extends StatelessWidget {
               children: [
 
                 const Text(
-                  'TOTAL A PAGAR',
+                  'TOTAL',
                   style: TextStyle(
                     color: Color(0xFF4DA3FF),
                     fontSize: 19,
@@ -224,8 +233,8 @@ class TotalCompra extends StatelessWidget {
 
 Widget _iconoTotal(IconData icono) {
   return Container(
-    width: 42,
-    height: 42,
+    width: 32,
+    height: 32,
     decoration: BoxDecoration(
       color: const Color(0xFF303641),
       shape: BoxShape.circle,
@@ -233,7 +242,7 @@ Widget _iconoTotal(IconData icono) {
     child: Icon(
       icono,
       color: const Color(0xFF55A9FF),
-      size: 23,
+      size: 24,
     ),
   );
 }
