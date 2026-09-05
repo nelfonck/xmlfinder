@@ -1,7 +1,9 @@
 import 'package:comprassj/enums/estado_recepcion.dart';
+import 'package:comprassj/helpers/helper.dart';
 import 'package:comprassj/viewmodels/comprasviewmodel.dart';
 import 'package:comprassj/widgets/fondodegradado.dart';
 import 'package:comprassj/widgets/modelready.dart';
+import 'package:comprassj/widgets/totalcompra.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +14,7 @@ class ComprasView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formatoMoneda = NumberFormat('#,##0.00', 'es_CR');
+    final dateFormat = DateFormat('dd/MM/yyyy');
     
     return ChangeNotifierProvider(
       create: (_) => ComprasViewModel(),
@@ -30,31 +33,100 @@ class ComprasView extends StatelessWidget {
               body: Expanded(
                 child: Column(
                   children: [ 
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text('Estado recepcion: '),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: DropdownButton<EstadoRecepcion>(
-                            value: model.estadoSeleccionado,
-                            hint: const Text('Seleccione un estado'),
-                            items:EstadoRecepcion.values.map((estado){
-                              return DropdownMenuItem<EstadoRecepcion>(
-                                value: estado,
-                                child:Text(' ${estado.descripcion}'),
-                              );
-                            }).toList(), 
-                            onChanged: (value)async{
-                              if (value!=null){
-                                model.setEstado(value);    
-                                await model.getCompras();  
-                              }
-                            }
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text('Emisor '),
+                                  Text('Receptor')
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () async {
+                                      DateTime? fecha = await Helper.pickupDate(context);
+                                      if (fecha != null) {
+                                        model.desde = fecha;
+                                        model.safeNotifyListeners();
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.calendar_today),
+                                          SizedBox(width: 8),
+                                          Text(model.desde != null ? dateFormat.format(model.desde!) : 'DESDE' ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10,),
+                                  InkWell(
+                                    onTap: () async {
+                                      DateTime? fecha = await Helper.pickupDate(context);
+                                      if (fecha != null) {
+                                        model.hasta = fecha;
+                                        model.safeNotifyListeners();
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.calendar_today),
+                                          SizedBox(width: 8),
+                                          Text(model.hasta != null ? dateFormat.format(model.hasta!) : 'HASTA' ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
                           ),
-                        )
-                      ],
+                          Spacer(),
+                          Text('Estado recepcion: '),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: DropdownButton<EstadoRecepcion>(
+                              value: model.estadoSeleccionado,
+                              hint: const Text('Seleccione un estado'),
+                              items:EstadoRecepcion.values.map((estado){
+                                return DropdownMenuItem<EstadoRecepcion>(
+                                  value: estado,
+                                  child:Text(' ${estado.descripcion}'),
+                                );
+                              }).toList(), 
+                              onChanged: (value)async{
+                                if (value!=null){
+                                  model.setEstado(value);    
+                                  await model.getCompras();  
+                                }
+                              }
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                     Expanded(
                       child: ListView.builder(
@@ -150,6 +222,7 @@ class ComprasView extends StatelessWidget {
                         ),
                       ],
                     ),
+                    TotalCompra(),
                     Visibility(
                       visible: model.cargando,
                       child: LinearProgressIndicator()

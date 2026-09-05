@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:comprassj/enums/estado_recepcion.dart';
 import 'package:comprassj/models/factura_compra.dart';
+import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/repositories/comprarepository.dart';
 import 'package:comprassj/services/compraservice.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,8 @@ class ComprasViewModel extends ChangeNotifier{
   int refreshEveryMinutes = 1 ;
   Duration tiempoRestante = Duration();
   bool cargando = false;
+  List<RazonSocial> razonesSociales = [];
+  DateTime? desde, hasta;
   
   @override
   void dispose() {
@@ -50,7 +53,7 @@ class ComprasViewModel extends ChangeNotifier{
       (timer) {
         if (tiempoRestante.inSeconds > 0) {
           tiempoRestante -= const Duration(seconds: 1);
-          _safeNotifyListeners();
+          safeNotifyListeners();
         }
       },
     );
@@ -58,30 +61,34 @@ class ComprasViewModel extends ChangeNotifier{
 
   void setEstado(EstadoRecepcion estado){
     estadoSeleccionado = estado;
-    _safeNotifyListeners();
+    safeNotifyListeners();
   }
 
   Future<Map<String,dynamic>?> getCompras()async{
     try {
       cargando = true;
-      _safeNotifyListeners();
+      safeNotifyListeners();
 
       final result = await _compraRepository.getCompras(estadoSeleccionado?.codigo == 6 ? null : estadoSeleccionado?.codigo);
       if (result['statusCode']==200){
         facturas = result['compras'].map<FacturaCompra>((e) => FacturaCompra.fromJson(e)).toList();
         cargando = false;
-        _safeNotifyListeners();
+        safeNotifyListeners();
         return result;
       }
     } catch (e) {
       cargando = false;
-      _safeNotifyListeners();
+      safeNotifyListeners();
       rethrow;
     }
     return null;
   }
 
-  void _safeNotifyListeners(){
+  Future<void> getRazonesSociales() async{
+
+  }
+
+  void safeNotifyListeners(){
     if (!_disposed){
       notifyListeners();
     }
