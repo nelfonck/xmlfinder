@@ -1,10 +1,15 @@
+import 'package:comprassj/viewmodels/comprasviewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class TotalCompra extends StatelessWidget {
-  const TotalCompra({super.key});
+  const TotalCompra({super.key, required this.model});
+  final ComprasViewModel model;
 
   @override
   Widget build(BuildContext context) {
+    final formatoMoneda = NumberFormat('#,##0.00', 'es_CR');
+
     return Container(
       //margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.symmetric(
@@ -26,123 +31,85 @@ class TotalCompra extends StatelessWidget {
         ],
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
 
-          // =========================================================
-          // INFORMACIÓN DE LA IZQUIERDA
-          // =========================================================
-
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-
-                // SUB TOTAL
-                Row(
-                  children: [
-                    Spacer(),
-                    _iconoTotal(
-                      Icons.shopping_cart_outlined,
-                    ),
-
-                    const SizedBox(width: 15),
-
-                    Text(
-                      'Sub total:',
-                      style: TextStyle(
-                        color: Color(0xFFB9BBC2),
-                        fontSize: 19,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-
-                    SizedBox(
-                      width: 200,
-                      child: const Text(
-                        '₡44.635,00',
-                        textAlign: TextAlign.end,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-
-                // TOTAL IMPUESTO
-                Row(
-                  children: [
-                    Spacer(),
-                    _iconoTotal(
-                      Icons.description_outlined,
-                    ),
-
-                    const SizedBox(width: 15),
-
-                    Text(
-                      'Total impuesto:',
-                      style: TextStyle(
-                        color: Color(0xFFB9BBC2),
-                        fontSize: 19,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-
-                    SizedBox(
-                      width: 200,
-                      child: const Text(
-                        '₡2.826,58',
-                        textAlign: TextAlign.end,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-
-                // TOTAL COMPROBANTE
-                Row(
-                  children: [
-                    Spacer(),
-                    _iconoTotal(
-                      Icons.account_balance_wallet_outlined,
-                    ),
-
-                    const SizedBox(width: 15),
-
-                    Text(
-                      'Total comprobante:',
-                      style: TextStyle(
-                        color: Color(0xFFB9BBC2),
-                        fontSize: 19,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-
-                    SizedBox(
-                      width: 200,
-                      child: const Text(
-                        '₡44.635,00',
-                        textAlign: TextAlign.end,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+          _iconoTotal(
+            Icons.shopping_cart_outlined,
+          ),
+                
+          const SizedBox(width: 15),
+                
+          Text(
+            'Sub total: ',
+            style: TextStyle(
+              color: Color(0xFFB9BBC2),
+              fontSize: 19,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+                
+          Text(
+            formatoMoneda.format(model.subTotal) ,
+            textAlign: TextAlign.end,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+                    
+          const SizedBox(width: 50),
+                    
+          // TOTAL IMPUESTO
+          _iconoTotal(
+            Icons.description_outlined,
+          ),
+                
+          const SizedBox(width: 15),
+                
+          Text(
+            'Total impuesto: ',
+            style: TextStyle(
+              color: Color(0xFFB9BBC2),
+              fontSize: 19,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Text(
+            formatoMoneda.format(model.totalImpuesto),
+            textAlign: TextAlign.end,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 50),   
+                          
+          // TOTAL COMPROBANTE
+          _iconoTotal(
+            Icons.account_balance_wallet_outlined,
+          ),
+                
+          const SizedBox(width: 15),
+                
+          Text(
+            'Total: ',
+            style: TextStyle(
+              color: Color(0xFFB9BBC2),
+              fontSize: 19,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+                
+          Text(
+            formatoMoneda.format(model.total),
+            textAlign: TextAlign.end,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
             ),
           ),
 
@@ -150,81 +117,6 @@ class TotalCompra extends StatelessWidget {
           // LINEA VERTICAL
           // =========================================================
 
-          Container(
-            width: 2,
-            height: 155,
-            margin: const EdgeInsets.symmetric(
-              horizontal: 22,
-            ),
-            color: const Color(0xFF4DA3FF),
-          ),
-
-          // =========================================================
-          // TOTAL A PAGAR
-          // =========================================================
-
-          Container(
-            width: 315,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 22,
-              vertical: 15,
-            ),
-            decoration: BoxDecoration(
-              color: const Color(0xFF182A43),
-              borderRadius: BorderRadius.circular(17),
-              border: Border.all(
-                color: const Color(0xFF25466F),
-              ),
-            ),
-            child: Column(
-              children: [
-
-                const Text(
-                  'TOTAL',
-                  style: TextStyle(
-                    color: Color(0xFF4DA3FF),
-                    fontSize: 19,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 0.3,
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-
-                    const Text(
-                      '₡44.635,00',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    const SizedBox(width: 15),
-
-                    // Icono de etiqueta
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF303A48),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.sell_outlined,
-                        color: Color(0xFF4DA3FF),
-                        size: 26,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:comprassj/enums/estado_recepcion.dart';
 import 'package:comprassj/helpers/helper.dart';
+import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/viewmodels/comprasviewmodel.dart';
 import 'package:comprassj/widgets/fondodegradado.dart';
 import 'package:comprassj/widgets/modelready.dart';
@@ -15,209 +16,446 @@ class ComprasView extends StatelessWidget {
   Widget build(BuildContext context) {
     final formatoMoneda = NumberFormat('#,##0.00', 'es_CR');
     final dateFormat = DateFormat('dd/MM/yyyy');
-    
+
     return ChangeNotifierProvider(
       create: (_) => ComprasViewModel(),
       child: ModelReady<ComprasViewModel>(
-        onModelReady: (ComprasViewModel model) async{
+        onModelReady: (ComprasViewModel model) async {
           await model.init();
         },
         child: Consumer<ComprasViewModel>(
-          builder: ((context, model, child) {
+          builder: (context, model, child) {
             return Scaffold(
-                appBar: AppBar(
-                title: Text('Compras'),
+              appBar: AppBar(
+                title: const Text('Compras'),
                 flexibleSpace: FondoDegradado(),
-                elevation: 0
+                elevation: 0,
               ),
+
               body: Column(
-                children: [ 
+                children: [
+
+                  // =========================================================
+                  // FILTROS
+                  // =========================================================
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    child: Column(
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                        // =====================================================
+                        // EMISOR / RECEPTOR
+                        // =====================================================
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                Text('Emisor '),
-                                Text('Receptor')
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                InkWell(
-                                  onTap: () async {
-                                    DateTime? fecha = await Helper.pickupDate(context);
-                                    if (fecha != null) {
-                                      model.desde = fecha;
+
+                            // EMISOR
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 5),
+                                child: DropdownButtonFormField<RazonSocial>(
+                                  initialValue: model.emisor,
+                                  isExpanded: true,
+
+                                  decoration: InputDecoration(
+                                    labelText: 'Emisor',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
+                                  ),
+
+                                  hint: const Text(
+                                    'Seleccione una razón social',
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+
+                                  items: model.razonesSociales.map((emisor) {
+                                    return DropdownMenuItem<RazonSocial>(
+                                      value: emisor,
+                                      child: Text(
+                                        emisor.nombre,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    );
+                                  }).toList(),
+
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      model.emisor = value;
                                       model.safeNotifyListeners();
                                     }
                                   },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
+                                ),
+                              ),
+                            ),
+
+                            // RECEPTOR
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5),
+                                child: DropdownButtonFormField<RazonSocial>(
+                                  initialValue: model.receptor,
+                                  isExpanded: true,
+
+                                  decoration: InputDecoration(
+                                    labelText: 'Receptor',
+                                    border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(Icons.calendar_today),
-                                        SizedBox(width: 8),
-                                        Text(model.desde != null ? dateFormat.format(model.desde!) : 'DESDE' ),
-                                      ],
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
                                     ),
+                                  ),
+
+                                  hint: const Text(
+                                    'Seleccione una razón social',
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+
+                                  items: model.razonesSociales.map((receptor) {
+                                    return DropdownMenuItem<RazonSocial>(
+                                      value: receptor,
+                                      child: Text(
+                                        receptor.nombre,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    );
+                                  }).toList(),
+
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      model.receptor = value;
+                                      model.safeNotifyListeners();
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 100,),
+                            // FECHAS
+                            // =====================================================
+                            Expanded(
+                              child: InkWell(
+                                onTap: () async {
+                                  DateTime? fecha =
+                                      await Helper.pickupDate(context);
+                            
+                                  if (fecha != null) {
+                                    model.desde = fecha;
+                                    model.safeNotifyListeners();
+                                  }
+                                },
+                                child: Container(
+                                  height: 50,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.calendar_today),
+                                      const SizedBox(width: 8),
+                            
+                                      Expanded(
+                                        child: Text(
+                                          model.desde != null
+                                              ? dateFormat.format(model.desde!)
+                                              : 'DESDE',
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(width: 10,),
-                                InkWell(
-                                  onTap: () async {
-                                    DateTime? fecha = await Helper.pickupDate(context);
-                                    if (fecha != null) {
-                                      model.hasta = fecha;
-                                      model.safeNotifyListeners();
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(Icons.calendar_today),
-                                        SizedBox(width: 8),
-                                        Text(model.hasta != null ? dateFormat.format(model.hasta!) : 'HASTA' ),
-                                      ],
-                                    ),
+                              ),
+                            ),
+                            
+                            const SizedBox(width: 10),
+                            
+                            // HASTA
+                            Expanded(
+                              child: InkWell(
+                                onTap: () async {
+                                  DateTime? fecha =
+                                      await Helper.pickupDate(context);
+                            
+                                  if (fecha != null) {
+                                    model.hasta = fecha;
+                                    model.safeNotifyListeners();
+                                  }
+                                },
+                                child: Container(
+                                  height: 50,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
                                   ),
-                                )
-                              ],
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.grey,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.calendar_today),
+                                      const SizedBox(width: 8),
+                            
+                                      Expanded(
+                                        child: Text(
+                                          model.hasta != null
+                                              ? dateFormat.format(model.hasta!)
+                                              : 'HASTA',
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                        Spacer(),
-                        Text('Estado recepcion: '),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: DropdownButton<EstadoRecepcion>(
-                            value: model.estadoSeleccionado,
-                            hint: const Text('Seleccione un estado'),
-                            items:EstadoRecepcion.values.map((estado){
-                              return DropdownMenuItem<EstadoRecepcion>(
-                                value: estado,
-                                child:Text(' ${estado.descripcion}'),
-                              );
-                            }).toList(), 
-                            onChanged: (value)async{
-                              if (value!=null){
-                                model.setEstado(value);    
-                                await model.getCompras();  
-                              }
-                            }
-                          ),
-                        )
+                        SizedBox(height: 20,),
+                        // =====================================================
+                        // ESTADO DE RECEPCIÓN
+                        // =====================================================
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            const Text(
+                              'Estado recepción:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            const SizedBox(width: 10),
+
+                            SizedBox(
+                              width: 250,
+                              child: DropdownButtonFormField<EstadoRecepcion>(
+                                initialValue: model.estadoSeleccionado,
+                                isExpanded: true,
+                              
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                ),
+                              
+                                hint: const Text(
+                                  'Seleccione un estado',
+                                ),
+                              
+                                items: EstadoRecepcion.values.map((estado) {
+                                  return DropdownMenuItem<EstadoRecepcion>(
+                                    value: estado,
+                                    child: Text(
+                                      estado.descripcion,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  );
+                                }).toList(),
+                              
+                                onChanged: (value) async {
+                                  if (value != null) {
+                                    model.setEstado(value);
+                                    await model.getCompras();
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
+
+                  // =========================================================
+                  // LISTA DE FACTURAS
+                  // =========================================================
                   Expanded(
                     child: ListView.builder(
                       itemCount: model.facturas.length,
-                      itemBuilder: ((context, index) {
+                      itemBuilder: (context, index) {
+                        final factura = model.facturas[index];
+
+                        final estado = factura.estadoRecepcion != null
+                            ? EstadoRecepcion.desdeCodigo(
+                                factura.estadoRecepcion!,
+                              )
+                            : null;
+
                         return Card(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           child: ListTile(
+
+                            // =================================================
+                            // TITULO
+                            // =================================================
                             title: Row(
                               children: [
-                                // COLUMNA 2 - PROVEEDOR
+
+                                // EMISOR
                                 Expanded(
                                   flex: 3,
                                   child: Text(
-                                    'Emisor -> ${model.facturas[index].emisorNombreComercial}',
+                                    'Emisor -> ${factura.emisorNombreComercial}',
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-              
-                                // COLUMNA 1 - CONSECUTIVO
+
+                                const SizedBox(width: 10),
+
+                                // CONSECUTIVO
                                 Expanded(
                                   flex: 2,
                                   child: Text(
-                                    'CONSECUTIVO: ${model.facturas[index].numeroConsecutivo}',
+                                    'CONSECUTIVO: ${factura.numeroConsecutivo}',
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-              
-                                // COLUMNA 3 - FECHA  
+
+                                const SizedBox(width: 10),
+
+                                // FECHA
                                 Expanded(
                                   flex: 1,
                                   child: Text(
-                                    model.facturas[index].fechaEmision != null
-                                        ? 'FECHA: ${model.facturas[index].fechaEmision!.day}/'
-                                          '${model.facturas[index].fechaEmision!.month}/'
-                                          '${model.facturas[index].fechaEmision!.year}'
+                                    factura.fechaEmision != null
+                                        ? 'FECHA: ${factura.fechaEmision!.day}/'
+                                          '${factura.fechaEmision!.month}/'
+                                          '${factura.fechaEmision!.year}'
                                         : 'Sin fecha',
                                     textAlign: TextAlign.right,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
+
+                            // =================================================
+                            // SUBTITULO
+                            // =================================================
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
+
                                 Text(
-                                  'Receptor -> ${model.facturas[index].receptorNombreComercial}',
+                                  'Receptor -> ${factura.receptorNombreComercial}',
                                   overflow: TextOverflow.ellipsis,
                                 ),
+
+                                const SizedBox(height: 5),
+
                                 Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Estado : ${EstadoRecepcion.desdeCodigo(model.facturas[index].estadoRecepcion!) ?.descripcion ?? ''}',
-                                    style: TextStyle(
-                                      color: EstadoRecepcion.desdeCodigo(model.facturas[index].estadoRecepcion!)?.color,
-                                      fontWeight: FontWeight.bold
-                                      ), ),
-                                    Spacer(),
+
+                                    // ESTADO
+                                    Expanded(
+                                      child: Text(
+                                        'Estado : ${estado?.descripcion ?? ''}',
+                                        style: TextStyle(
+                                          color: estado?.color,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+
+                                    // TOTALES
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
                                       children: [
-                                        Text("Moneda: ${model.facturas[index].moneda}"),
-                                        Text("Tipo cambio: ${model.facturas[index].tipoCambio}"),
-                                        Text("Sub total: ${formatoMoneda.format(model.facturas[index].totalVentaNeta ?? 0)}"),
-                                        Text("Total impuesto: ${formatoMoneda.format(model.facturas[index].totalImpuesto ?? 0) }"),
-                                        Text("Total comprobante: ${formatoMoneda.format(model.facturas[index].totalComprobante ?? 0)}"),
+
+                                        Text(
+                                          'Moneda: ${factura.moneda}',
+                                        ),
+
+                                        Text(
+                                          'Tipo cambio: ${factura.tipoCambio}',
+                                        ),
+
+                                        Text(
+                                          'Sub total: '
+                                          '${formatoMoneda.format(
+                                            factura.totalVentaNeta ?? 0,
+                                          )}',
+                                        ),
+
+                                        Text(
+                                          'Total impuesto: '
+                                          '${formatoMoneda.format(
+                                            factura.totalImpuesto ?? 0,
+                                          )}',
+                                        ),
+
+                                        Text(
+                                          'Total comprobante: '
+                                          '${formatoMoneda.format(
+                                            factura.totalComprobante ?? 0,
+                                          )}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ],
-                                    )
+                                    ),
                                   ],
-                                )
+                                ),
                               ],
                             ),
                           ),
                         );
-                      })
-                    )
+                      },
+                    ),
                   ),
-                  TotalCompra(),
+
+                  // =========================================================
+                  // TOTAL COMPRA
+                  // =========================================================
+                  TotalCompra(
+                    model: model,
+                  ),
+
                   Container(
-                    color: Colors.black.withValues(alpha: 0.30),
+                    color: Colors.black.withValues(
+                      alpha: 0.30,
+                    ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text('Numero de registros: ${model.facturas.length}'),
-                        ),
-                        Spacer(),
+
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            '🔄Próxima actualización: '
+                            'Número de registros: ${model.facturas.length}',
+                          ),
+                        ),
+
+                        const Spacer(),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '🔄 Próxima actualización: '
                             '${model.tiempoRestante.inMinutes.toString().padLeft(2, '0')}:'
                             '${(model.tiempoRestante.inSeconds % 60).toString().padLeft(2, '0')}',
                           ),
@@ -225,16 +463,20 @@ class ComprasView extends StatelessWidget {
                       ],
                     ),
                   ),
+
+                  // =========================================================
+                  // LOADING
+                  // =========================================================
                   Visibility(
                     visible: model.cargando,
-                    child: LinearProgressIndicator()
+                    child: const LinearProgressIndicator(),
                   ),
                 ],
-              )
+              ),
             );
-          })
-        ) 
-      ) 
+          },
+        ),
+      ),
     );
   }
 }

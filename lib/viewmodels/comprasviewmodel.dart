@@ -4,7 +4,9 @@ import 'package:comprassj/enums/estado_recepcion.dart';
 import 'package:comprassj/models/factura_compra.dart';
 import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/repositories/comprarepository.dart';
+import 'package:comprassj/repositories/razonsocialrepository.dart';
 import 'package:comprassj/services/compraservice.dart';
+import 'package:comprassj/services/razonsocialservice.dart';
 import 'package:flutter/material.dart';
 
 class ComprasViewModel extends ChangeNotifier{
@@ -19,6 +21,10 @@ class ComprasViewModel extends ChangeNotifier{
   bool cargando = false;
   List<RazonSocial> razonesSociales = [];
   DateTime? desde, hasta;
+  RazonSocial? emisor, receptor;
+  final RazonSocialRepository _rsrepository = RazonSocialRepository(RazonSocialService());
+  double subTotal = 0, totalImpuesto = 0, total = 0;
+
   
   @override
   void dispose() {
@@ -29,6 +35,7 @@ class ComprasViewModel extends ChangeNotifier{
   }
 
   Future<void> init()async{
+    await getRazonesSociales();
     await getCompras();
     _iniciarActualizacionAutomatica();
     _iniciarContador();
@@ -73,11 +80,14 @@ class ComprasViewModel extends ChangeNotifier{
       if (result['statusCode']==200){
         facturas = result['compras'].map<FacturaCompra>((e) => FacturaCompra.fromJson(e)).toList();
         cargando = false;
-        safeNotifyListeners();
+        sumarTotales();
         return result;
       }
     } catch (e) {
       cargando = false;
+      subTotal = 0;
+      totalImpuesto = 0;
+      total = 0;
       safeNotifyListeners();
       rethrow;
     }
@@ -85,7 +95,22 @@ class ComprasViewModel extends ChangeNotifier{
   }
 
   Future<void> getRazonesSociales() async{
+    final result = await _rsrepository.getRazonesSociales();
+    razonesSociales = result;
+    safeNotifyListeners();
+  }
 
+  void sumarTotales(){
+    subTotal = 0;
+    totalImpuesto = 0;
+    total = 0;
+
+    for (var factura in facturas) {
+      subTotal+= factura.totalGravado ?? 0;
+      totalImpuesto+= factura.totalImpuesto ?? 0;
+      total+= factura.totalComprobante ?? 0;
+    }
+    safeNotifyListeners();
   }
 
   void safeNotifyListeners(){
