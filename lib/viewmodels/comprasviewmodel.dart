@@ -97,6 +97,12 @@ class ComprasViewModel extends ChangeNotifier{
   Future<void> getRazonesSociales() async{
     final result = await _rsrepository.getRazonesSociales();
     razonesSociales = result;
+    RazonSocial initialValue = RazonSocial(
+      id: -1, nombre: 'TODO', nombreComercial: 'TODO', identificacion: '1', tipoIdentificacion: '1', correo: '1', telefono: '1', activo: false, fechaRegistro: DateTime.now(), claveCorreo: '',
+    );
+    razonesSociales.insert(0,initialValue);
+    emisor = initialValue;
+    receptor = initialValue;
     safeNotifyListeners();
   }
 
