@@ -6,6 +6,7 @@ import 'package:comprassj/widgets/fondodegradado.dart';
 import 'package:comprassj/widgets/modelready.dart';
 import 'package:comprassj/widgets/totalcompra.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -325,13 +326,27 @@ class ComprasView extends StatelessWidget {
                                 const SizedBox(width: 10),
 
                                 // CONSECUTIVO
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    'CONSECUTIVO: ${factura.numeroConsecutivo}',
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                                Text(
+                                  'CONSECUTIVO: ${factura.numeroConsecutivo}',
+                                  overflow: TextOverflow.ellipsis,
                                 ),
+                                IconButton(
+                                    icon: const Icon(Icons.copy),
+                                    onPressed: () {
+                                      Clipboard.setData(
+                                        ClipboardData(
+                                          text: model.facturas[index].numeroConsecutivo ?? '',
+                                        ),
+                                      );
+
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          duration: Duration(milliseconds: 200),
+                                          content: Text('Copiado al portapapeles'),
+                                        ),
+                                      );
+                                    },
+                                  ),
 
                                 const SizedBox(width: 10),
 
