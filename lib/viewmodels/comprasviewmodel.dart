@@ -24,7 +24,6 @@ class ComprasViewModel extends ChangeNotifier{
   RazonSocial? emisor, receptor;
   final RazonSocialRepository _rsrepository = RazonSocialRepository(RazonSocialService());
   double subTotal = 0, totalImpuesto = 0, total = 0;
-
   
   @override
   void dispose() {
@@ -76,7 +75,13 @@ class ComprasViewModel extends ChangeNotifier{
       cargando = true;
       safeNotifyListeners();
 
-      final result = await _compraRepository.getCompras(estadoSeleccionado?.codigo == 6 ? null : estadoSeleccionado?.codigo);
+      final result = await _compraRepository.getCompras(
+        estadoSeleccionado?.codigo,
+        emisor, 
+        receptor,
+        desde,
+        hasta
+      );
       if (result['statusCode']==200){
         facturas = result['compras'].map<FacturaCompra>((e) => FacturaCompra.fromJson(e)).toList();
         cargando = false;
