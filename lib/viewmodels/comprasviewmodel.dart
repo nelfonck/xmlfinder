@@ -20,12 +20,13 @@ class ComprasViewModel extends ChangeNotifier{
   Duration tiempoRestante = Duration();
   bool cargando = false;
   List<RazonSocial> razonesSociales = [];
-  DateTime? desde, hasta;
+  DateTime?  desde = DateTime(DateTime.now().year, 1, 1);
+  DateTime?  hasta;
   RazonSocial? emisor, receptor;
   final RazonSocialRepository _rsrepository = RazonSocialRepository(RazonSocialService());
   double subTotal = 0, totalImpuesto = 0, total = 0;
   
-  @override
+  @override 
   void dispose() {
     _disposed = true;
     _timer?.cancel();
