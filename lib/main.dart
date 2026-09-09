@@ -4,7 +4,6 @@ import 'package:comprassj/views/configuracionview.dart';
 import 'package:comprassj/views/nuevarazonsocialview.dart';
 import 'package:comprassj/views/nuevatiendaview.dart';
 import 'package:comprassj/views/nuevoproveedorview.dart';
-import 'package:comprassj/views/xmlfinderview.dart';
 import 'package:flutter/material.dart';
 
 void main() async{
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Xml finder',
+      title: 'Monitoreo de facturas',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -61,7 +60,7 @@ class MyApp extends StatelessWidget {
         'nuevo_proveedor': (context) => const NuevoProveedorView(),
         'compras': (context) => const ComprasView(),
       },
-      home: const XmlFinderView(),
+      home: const ComprasView(),
     );
   }
 }

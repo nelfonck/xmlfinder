@@ -16,7 +16,7 @@ class ComprasViewModel extends ChangeNotifier{
   EstadoRecepcion? estadoSeleccionado = EstadoRecepcion.esperadescarga;
   Timer? _timer;
   Timer? _timerContador;
-  int refreshEveryMinutes = 1 ;
+  int refreshEveryMinutes = 15 ;
   Duration tiempoRestante = Duration();
   bool cargando = false;
   List<RazonSocial> razonesSociales = [];

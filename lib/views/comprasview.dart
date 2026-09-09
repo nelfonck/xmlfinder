@@ -1,5 +1,6 @@
 import 'package:comprassj/enums/estado_recepcion.dart';
 import 'package:comprassj/helpers/helper.dart';
+import 'package:comprassj/helpers/mensajes.dart';
 import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/viewmodels/comprasviewmodel.dart';
 import 'package:comprassj/widgets/fondodegradado.dart';
@@ -22,13 +23,20 @@ class ComprasView extends StatelessWidget {
       create: (_) => ComprasViewModel(),
       child: ModelReady<ComprasViewModel>(
         onModelReady: (ComprasViewModel model) async {
+          if (!Helper.configuracionLista()){
+            await Navigator.of(context).pushNamed('configuracion');
+            if (Helper.configuracionLista()){
+              await model.init();
+            }
+            return;
+          }
           await model.init();
         },
         child: Consumer<ComprasViewModel>(
           builder: (context, model, child) {
             return Scaffold(
               appBar: AppBar(
-                title: const Text('Compras'),
+                title: const Text('Monitoreo de facturación interna'),
                 flexibleSpace: FondoDegradado(),
                 elevation: 0,
               ),
@@ -84,10 +92,17 @@ class ComprasView extends StatelessWidget {
                                     );
                                   }).toList(),
 
-                                  onChanged: (value) {
+                                  onChanged: (value) async{
                                     if (value != null) {
                                       model.emisor = value;
                                       model.safeNotifyListeners();
+                                      try {
+                                        await model.getCompras();
+                                      } catch (e) {
+                                        if (context.mounted){
+                                          Mensajes.error(context, e.toString());
+                                        }
+                                      }
                                     }
                                   },
                                 ),
@@ -128,10 +143,18 @@ class ComprasView extends StatelessWidget {
                                     );
                                   }).toList(),
 
-                                  onChanged: (value) {
+                                  onChanged: (value) async{
                                     if (value != null) {
                                       model.receptor = value;
                                       model.safeNotifyListeners();
+                                      try{
+                                        await model.getCompras();
+
+                                      }catch(e){
+                                        if (context.mounted){
+                                          Mensajes.error(context, e.toString());
+                                        }
+                                      }
                                     }
                                   },
                                 ),
@@ -144,11 +167,18 @@ class ComprasView extends StatelessWidget {
                               child: InkWell(
                                 onTap: () async {
                                   DateTime? fecha =
-                                      await Helper.pickupDate(context);
+                                      await Helper.pickupDesdeDate(context);
                             
                                   if (fecha != null) {
                                     model.desde = fecha;
                                     model.safeNotifyListeners();
+                                    try {
+                                      model.getCompras();
+                                    } catch (e) {
+                                      if (context.mounted){
+                                        Mensajes.error(context, e.toString());
+                                      }
+                                    }
                                   }
                                 },
                                 child: Container(
@@ -188,11 +218,18 @@ class ComprasView extends StatelessWidget {
                               child: InkWell(
                                 onTap: () async {
                                   DateTime? fecha =
-                                      await Helper.pickupDate(context);
+                                      await Helper.pickupHastaDate(context);
                             
                                   if (fecha != null) {
                                     model.hasta = fecha;
                                     model.safeNotifyListeners();
+                                    try {
+                                      await model.getCompras();
+                                    } catch (e) {
+                                      if (context.mounted){
+                                        Mensajes.error(context, e.toString());
+                                      }
+                                    }
                                   }
                                 },
                                 child: Container(
@@ -355,9 +392,7 @@ class ComprasView extends StatelessWidget {
                                   flex: 1,
                                   child: Text(
                                     factura.fechaEmision != null
-                                        ? 'FECHA: ${factura.fechaEmision!.day}/'
-                                          '${factura.fechaEmision!.month}/'
-                                          '${factura.fechaEmision!.year}'
+                                        ? dateFormat.format(factura.fechaEmision!)
                                         : 'Sin fecha',
                                     textAlign: TextAlign.right,
                                     overflow: TextOverflow.ellipsis,

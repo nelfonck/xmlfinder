@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:comprassj/helpers/helper.dart';
 import 'package:comprassj/models/detallefacturacompra.dart';
 import 'package:comprassj/models/factura_compra.dart';
 import 'package:comprassj/models/razonsocial.dart';
@@ -483,7 +484,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
   }
 
   Future<void> cargarTiendas() async{
-    if (!configuracionLista()){
+    if (!Helper.configuracionLista()){
       return;
     }
     tiendas = await _repositoryTienda.getTiendas();
@@ -491,7 +492,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
   }
 
   Future<void> cargarRazonesSociales() async{
-    if (!configuracionLista()){
+    if (!Helper.configuracionLista()){
       return;
     }
     razonesSociales = await _repositoryRazonSocial.getRazonesSociales();
@@ -508,13 +509,6 @@ class Xmlfinderviewmodel extends ChangeNotifier{
     if (!_disposed) {
       notifyListeners();
     }
-  }
-
-  bool configuracionLista(){
-    if (Preferencias.host.isNotEmpty && Preferencias.port.isNotEmpty){
-      return true;
-    }
-    return false;
   }
 
   void seleccionarTienda(int index) {

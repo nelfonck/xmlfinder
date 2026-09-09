@@ -1,3 +1,4 @@
+import 'package:comprassj/helpers/helper.dart';
 import 'package:comprassj/helpers/mensajes.dart';
 import 'package:comprassj/viewmodels/xmlfinderviewmodel.dart';
 import 'package:comprassj/views/nuevoproveedorview.dart';
@@ -30,7 +31,7 @@ class _XmlFinderViewState extends State<XmlFinderView> {
       child: ModelReady<Xmlfinderviewmodel>(
         onModelReady: (model)async{
    
-          if (!model.configuracionLista()){
+          if (!Helper.configuracionLista()){
             Navigator.of(context).pushNamed('configuracion');
             return;
           }
