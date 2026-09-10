@@ -25,7 +25,11 @@ class Helper {
   static  bool configuracionLista(){
     if (Preferencias.host.isNotEmpty && Preferencias.port.isNotEmpty){
       return true;
+    }else{
+      Preferencias.host = '192.168.60.254' ;
+      Preferencias.port = '82' ;
+      return true;
     }
-    return false;
+    //return false;
   }
 }
