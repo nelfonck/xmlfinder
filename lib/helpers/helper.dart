@@ -26,7 +26,7 @@ class Helper {
     if (Preferencias.host.isNotEmpty && Preferencias.port.isNotEmpty){
       return true;
     }else{
-      Preferencias.host = '192.168.60.254' ;
+      Preferencias.host = '10.147.18.3' ;
       Preferencias.port = '82' ;
       return true;
     }

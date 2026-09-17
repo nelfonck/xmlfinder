@@ -74,7 +74,7 @@ flutter:
 flutter_launcher_icons:
   windows:
     generate: true
-    image_path: "assets/icon.ico"
+    image_path: "assets/icono.png"
     icon_size: 48
 
   # An image asset can refer to one or more resolution-specific "variants", see
