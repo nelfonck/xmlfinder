@@ -3,6 +3,7 @@ import 'package:comprassj/helpers/helper.dart';
 import 'package:comprassj/helpers/mensajes.dart';
 import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/viewmodels/comprasviewmodel.dart';
+import 'package:comprassj/views/report_preview_page.dart';
 import 'package:comprassj/widgets/fondodegradado.dart';
 import 'package:comprassj/widgets/modelready.dart';
 import 'package:comprassj/widgets/totalcompra.dart';
@@ -39,6 +40,18 @@ class ComprasView extends StatelessWidget {
                 title: const Text('Monitoreo de facturación interna'),
                 flexibleSpace: FondoDegradado(),
                 elevation: 0,
+                actions: [
+                  IconButton(
+                    onPressed: (){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: ( _ ) => ReportPreviewPage(facturas: model.facturas,)
+                        )
+                      );
+                    }, 
+                    icon: Icon(Icons.print)
+                  )
+                ],
               ),
 
               body: Column(
