@@ -37,7 +37,7 @@ class ComprasView extends StatelessWidget {
           builder: (context, model, child) {
             return Scaffold(
               appBar: AppBar(
-                title: const Text('Monitoreo de facturación interna'),
+                title: const Text('COMPRAS ENTRE SUPERMERCADOS'),
                 flexibleSpace: FondoDegradado(),
                 elevation: 0,
                 actions: [
