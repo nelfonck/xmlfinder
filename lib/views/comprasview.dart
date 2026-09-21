@@ -45,7 +45,14 @@ class ComprasView extends StatelessWidget {
                     onPressed: (){
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: ( _ ) => ReportPreviewPage(facturas: model.facturas,)
+                          builder: ( _ ) => ReportPreviewPage(
+                            facturas: model.facturas,
+                            desde: model.desde,
+                            hasta: model.hasta,
+                            subTotal: model.subTotal,
+                            impuesto: model.totalImpuesto,
+                            total: model.total,
+                          )
                         )
                       );
                     }, 
