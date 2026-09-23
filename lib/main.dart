@@ -1,7 +1,6 @@
 import 'package:comprassj/services/preferencias.dart';
 import 'package:comprassj/views/comprasview.dart';
 import 'package:comprassj/views/configuracionview.dart';
-import 'package:comprassj/views/nuevarazonsocialview.dart';
 import 'package:comprassj/views/nuevatiendaview.dart';
 import 'package:comprassj/views/nuevoproveedorview.dart';
 import 'package:flutter/material.dart';

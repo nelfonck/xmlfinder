@@ -56,62 +56,60 @@ class RazonesSocialesView extends StatelessWidget {
                 ],
               ),
               body: SafeArea(
-                child: Expanded(
-                  child: ListView.builder(
-                    itemCount: model.razonesSociales.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: ()async{
-                          final result = await Navigator.push(
-                            context, 
-                            MaterialPageRoute(
-                              builder: (_) => NuevaRazonSocialView(modificar: true, razonSocial: model.razonesSociales[index],)
-                            )
-                          );
-                          if (result!=null){
-                            try {
-                              if (result){
-                                model.getRazonesSociales();
-                                if (context.mounted){
-                                  Mensajes.exito(context, 'Razon social modificada correctamente!!');
-                                }
-                              }
-                            } catch (e) {
+                child: ListView.builder(
+                  itemCount: model.razonesSociales.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: ()async{
+                        final result = await Navigator.push(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (_) => NuevaRazonSocialView(modificar: true, razonSocial: model.razonesSociales[index],)
+                          )
+                        );
+                        if (result!=null){
+                          try {
+                            if (result){
+                              model.getRazonesSociales();
                               if (context.mounted){
-                                Mensajes.error(context, e.toString());
+                                Mensajes.exito(context, 'Razon social modificada correctamente!!');
                               }
                             }
+                          } catch (e) {
+                            if (context.mounted){
+                              Mensajes.error(context, e.toString());
+                            }
                           }
-                        },
-                        child: Card(
-                          margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: ListTile(
-                            title: Text(model.razonesSociales[index].nombre),
-                            subtitle: Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Text(model.razonesSociales[index].nombreComercial)
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Text('Correo: ${model.razonesSociales[index].correo}')
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Text('Cedula: ${model.razonesSociales[index].identificacion}')
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Text('Telefono: ${model.razonesSociales[index].telefono}')
-                                ),
-                              ],
-                            ),
+                        }
+                      },
+                      child: Card(
+                        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        child: ListTile(
+                          title: Text(model.razonesSociales[index].nombre),
+                          subtitle: Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: Text(model.razonesSociales[index].nombreComercial)
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Text('Correo: ${model.razonesSociales[index].correo}')
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Text('Cedula: ${model.razonesSociales[index].identificacion}')
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Text('Telefono: ${model.razonesSociales[index].telefono}')
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    }
-                  )
+                      ),
+                    );
+                  }
                 )
               ),
             );
