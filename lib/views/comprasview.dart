@@ -3,8 +3,10 @@ import 'package:comprassj/helpers/helper.dart';
 import 'package:comprassj/helpers/mensajes.dart';
 import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/viewmodels/comprasviewmodel.dart';
+import 'package:comprassj/views/razonessocialesview.dart';
 import 'package:comprassj/views/report_preview_page.dart';
 import 'package:comprassj/widgets/fondodegradado.dart';
+import 'package:comprassj/widgets/menubutton.dart';
 import 'package:comprassj/widgets/modelready.dart';
 import 'package:comprassj/widgets/totalcompra.dart';
 import 'package:flutter/material.dart';
@@ -41,8 +43,22 @@ class ComprasView extends StatelessWidget {
                 flexibleSpace: FondoDegradado(),
                 elevation: 0,
                 actions: [
-                  IconButton(
-                    onPressed: (){
+                  menuButton(
+                    icon: Icons.business, 
+                    text: 'Razones Sociales', 
+                    onPressed: () {
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(
+                          builder: (_) => RazonesSocialesView()
+                        )
+                      );
+                    },
+                  ),
+                  menuButton(
+                    icon: Icons.print, 
+                    text: 'Informe', 
+                    onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: ( _ ) => ReportPreviewPage(
@@ -55,9 +71,8 @@ class ComprasView extends StatelessWidget {
                           )
                         )
                       );
-                    }, 
-                    icon: Icon(Icons.print)
-                  )
+                    },
+                  ),
                 ],
               ),
 

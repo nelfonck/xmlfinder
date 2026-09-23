@@ -1,3 +1,4 @@
+import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/repositories/razonsocialrepository.dart';
 import 'package:comprassj/services/razonsocialservice.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,19 @@ class NuevaRazonSocialViewModel extends ChangeNotifier{
 
   String? tipoSeleccionado;
 
+
+  void init(RazonSocial? razonSocial){
+    if (razonSocial!=null){
+      identificacionController.text = razonSocial.identificacion ;
+      razonSocialController.text = razonSocial.nombre ;
+      nombreComercialController.text = razonSocial.nombreComercial ;
+      correoController.text = razonSocial.correo ;
+      telefonoController.text = razonSocial.telefono ;
+      tipoSeleccionado = razonSocial.tipoIdentificacion;
+      safeNotifyListeners();
+    }
+  }
+
   Future<void> guardarRazonSocial() async{
 
     Map<String,dynamic> params = {
@@ -40,6 +54,21 @@ class NuevaRazonSocialViewModel extends ChangeNotifier{
     };
 
     await _repository.guardarRazonSocial(params);
+  }
+
+  Future<Map<String,dynamic>> modificarRazonSocial() async{
+
+    Map<String,dynamic> params = {
+      'identificacion': identificacionController.text,
+      'tipo_identificacion': tipoSeleccionado,
+      'nombre': razonSocialController.text,
+      'nombre_comercial': nombreComercialController.text,
+      'correo': correoController.text,
+      'telefono': telefonoController.text,
+      'clave_correo': claveCorreoController.text
+    };
+
+    return await _repository.modificarRazonSocial(params);
   }
 
   void clearControllers(){

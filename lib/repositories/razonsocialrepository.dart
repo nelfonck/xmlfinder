@@ -13,6 +13,10 @@ class RazonSocialRepository {
     return _service.guardarRazonSocial(params);
   }
 
+  Future<Map<String,dynamic>> modificarRazonSocial(Map<String,dynamic> params) async {
+    return _service.modificarRazonSocial(params);
+  }
+
   Future<bool> existeRazonSocial(String identificacion)async{
     return _service.existeRazonSocial(identificacion);
   }

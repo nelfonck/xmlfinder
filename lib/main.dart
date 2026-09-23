@@ -55,7 +55,6 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         'configuracion': (context) => const ConfiguracionView(),
-        'razon_social': (context) => const NuevaRazonSocialView(),
         'nueva_tienda': (context) => const NuevaTiendaView(),
         'nuevo_proveedor': (context) => const NuevoProveedorView(),
         'compras': (context) => const ComprasView(),

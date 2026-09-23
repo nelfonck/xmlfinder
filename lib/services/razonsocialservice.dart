@@ -58,6 +58,30 @@ class RazonSocialService {
     }
   }
 
+  Future<Map<String,dynamic>> modificarRazonSocial(Map<String,dynamic> params)async{
+    try {
+      final url = Uri.http(Preferencias.baseUrl, '/comprassjapi/public/api/modificar-razon-social');
+
+      final resp = await http.put(
+        url,
+        body: jsonEncode(params) ,
+        headers: Preferencias.headers
+      );
+
+      final body = jsonDecode(resp.body);
+
+      if (resp.statusCode != 200) {
+        throw Exception(
+          body['message'],
+        );
+      }
+      return body;
+
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   Future<bool> existeRazonSocial(String identificacion)async{
     try {
       final url = Uri.http(Preferencias.baseUrl, '/comprassjapi/public/api/existe-razon-social',{
