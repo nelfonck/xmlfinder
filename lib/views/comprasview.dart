@@ -5,6 +5,7 @@ import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/viewmodels/comprasviewmodel.dart';
 import 'package:comprassj/views/razonessocialesview.dart';
 import 'package:comprassj/views/report_preview_page.dart';
+import 'package:comprassj/views/ventasview.dart';
 import 'package:comprassj/widgets/fondodegradado.dart';
 import 'package:comprassj/widgets/menubutton.dart';
 import 'package:comprassj/widgets/modelready.dart';
@@ -43,6 +44,24 @@ class ComprasView extends StatelessWidget {
                 flexibleSpace: FondoDegradado(),
                 elevation: 0,
                 actions: [
+                  menuButton(
+                    icon: Icons.receipt_long, 
+                    text: 'Ventas', 
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => VentasView()
+                        )
+                      );
+                    },
+                  ),
+                  menuButton(
+                    icon: Icons.store, 
+                    text: 'Tiendas', 
+                    onPressed: () {
+                      Navigator.pushNamed(context, 'nueva_tienda');
+                    },
+                  ),
                   menuButton(
                     icon: Icons.business, 
                     text: 'Razones Sociales', 
