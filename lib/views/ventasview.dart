@@ -23,7 +23,6 @@ class VentasView extends StatelessWidget {
         onModelReady: (Ventasviewmodel model) async{
           try {
             await model.getTiendas();
-            model.precargarData();
           } catch (e) {
             if (context.mounted){
               Mensajes.error(context, e.toString());
@@ -37,6 +36,20 @@ class VentasView extends StatelessWidget {
                 title: Text('Ventas'),
                 flexibleSpace: FondoDegradado(),
                 elevation: 0,
+                actions: [
+                  IconButton(
+                    onPressed: ()async{
+                      try {
+                        await model.getVentas();
+                      } catch (e) {
+                        if (context.mounted){
+                          Mensajes.error(context, e.toString());
+                        }
+                      }
+                    }, 
+                    icon: Icon(Icons.report)
+                  )
+                ],
               ),
               body: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -229,7 +242,7 @@ class VentasView extends StatelessWidget {
                                   flex: 3,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(model.ventas[index].comercio),
+                                    child: Text(model.ventas[index].compania?.razonComercial ?? ''),
                                   )
                                 ),
                                 Expanded(

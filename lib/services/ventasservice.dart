@@ -1,53 +1,27 @@
 import 'dart:convert';
-import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/services/preferencias.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class VentasService {
 
-  Future<Map<String,dynamic>> getCompras(int? estadoRecepcion, RazonSocial? emisor, RazonSocial? receptor, DateTime? desde, DateTime? hasta)async{
+  Future<Map<String,dynamic>> getVentas(DateTime? desde, DateTime? hasta)async{
     try {
+      final dateFormat = DateFormat('yyyy-MM-dd');
 
-      final params = <String, String>{};
+      final params = <String, dynamic>{
+        'fecha_inicio' : desde!=null ? dateFormat.format(desde) : null,
+        'fecha_fin' : hasta!=null ? dateFormat.format(hasta) : null,
+      };
 
-      if (estadoRecepcion != null) {
-        params['estado_recepcion'] = estadoRecepcion.toString();
-      }
-
-      if (emisor != null) {
-        params['emisor'] = jsonEncode(emisor.toJson());
-      }
-
-      if (receptor != null) {
-        params['receptor'] = jsonEncode(receptor.toJson());
-      }
-
-      if (desde != null) {
-        params['desde'] = DateFormat('yyyy-MM-dd').format(desde);
-      }
-
-      if (hasta != null) {
-        params['hasta'] = DateFormat('yyyy-MM-dd').format(hasta);
-      }
-
-      final url = Uri.http(Preferencias.baseUrl, '/comprassjapi/public/api/compras',params);
+      final url = Uri.http(Preferencias.baseUrl, '/comprassjapi/public/api/ventas',params);
 
       final resp = await http.get(
         url,
         headers: Preferencias.headers
       );
-
-
-      final body = jsonDecode(resp.body);
-
-      if (resp.statusCode != 200) {
-        throw Exception(
-          body['message'],
-        );
-      }
-
-      return body;
+      
+      return jsonDecode(resp.body);
 
     } catch (e) {
       throw Exception(e.toString());

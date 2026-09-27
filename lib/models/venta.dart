@@ -3,78 +3,87 @@
 //     final ventas = ventasFromJson(jsonString);
 
 import 'dart:convert';
+import 'package:comprassj/models/compania.dart';
 
-Ventas ventasFromJson(String str) => Ventas.fromJson(json.decode(str));
+List<Ventas> ventasFromJson(String str) => List<Ventas>.from(json.decode(str).map((x) => Ventas.fromJson(x)));
 
-String ventasToJson(Ventas data) => json.encode(data.toJson());
+String ventasToJson(List<Ventas> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Ventas {
-    String comercio;
-    String cedula;
-    double facturado;
-    double iva;
-    double colones;
-    double dolares;
-    double descuento;
-    double credito;
-    double sinpe;
+    Compania? compania;
+    double? facturado;
+    double? iva;
+    double? colones;
+    double? dolares;
+    double? descuento;
+    double? credito;
+    double? tarjeta;
+    double? sinpe;
+    double? mixto;
 
     Ventas({
-        required this.comercio,
-        required this.cedula,
-        required this.facturado,
-        required this.iva,
-        required this.colones,
-        required this.dolares,
-        required this.descuento,
-        required this.credito,
-        required this.sinpe,
+        this.compania,
+        this.facturado,
+        this.iva,
+        this.colones,
+        this.dolares,
+        this.descuento,
+        this.credito,
+        this.tarjeta,
+        this.sinpe,
+        this.mixto,
     });
 
     Ventas copyWith({
-        String? comercio,
-        String? cedula,
+        Compania? compania,
         double? facturado,
         double? iva,
         double? colones,
         double? dolares,
         double? descuento,
         double? credito,
+        double? tarjeta,
         double? sinpe,
+        double? mixto,
     }) => 
         Ventas(
-            comercio: comercio ?? this.comercio,
-            cedula: cedula ?? this.cedula,
+            compania: compania ?? this.compania,
             facturado: facturado ?? this.facturado,
             iva: iva ?? this.iva,
             colones: colones ?? this.colones,
             dolares: dolares ?? this.dolares,
             descuento: descuento ?? this.descuento,
             credito: credito ?? this.credito,
+            tarjeta: tarjeta ?? this.tarjeta,
             sinpe: sinpe ?? this.sinpe,
+            mixto: mixto ?? this.mixto,
         );
 
     factory Ventas.fromJson(Map<String, dynamic> json) => Ventas(
-        comercio: json["comercio"],
-        cedula: json["cedula"],
-        facturado: json["facturado"],
-        iva: json["iva"],
-        colones: json["colones"],
-        dolares: json["dolares"],
-        descuento: json["descuento"],
-        credito: json["credito"],
-        sinpe: json["sinpe"],
+        compania: json["compania"] == null ? null : Compania.fromJson(json["compania"]),
+        facturado: json["facturado"]?.toDouble(),
+        iva: json["iva"]?.toDouble(),
+        colones: json["colones"]?.toDouble(),
+        dolares: json["dolares"]?.toDouble(),
+        descuento: json["descuento"]?.toDouble(),
+        credito: json["credito"]?.toDouble(),
+        tarjeta: json["tarjeta"]?.toDouble(),
+        sinpe: json["sinpe"]?.toDouble(),
+        mixto: json["mixto"]?.toDouble(),
     );
 
     Map<String, dynamic> toJson() => {
-        "comercio": comercio,
-        "cedula": cedula,
+        "compania": compania?.toJson(),
         "facturado": facturado,
         "iva": iva,
         "colones": colones,
         "dolares": dolares,
         "descuento": descuento,
         "credito": credito,
+        "tarjeta": tarjeta,
         "sinpe": sinpe,
+        "mixto": mixto,
     };
 }
+
+
