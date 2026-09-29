@@ -1,5 +1,6 @@
 import 'package:comprassj/services/preferencias.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Helper {
 
@@ -32,4 +33,8 @@ class Helper {
     }
     //return false;
   }
+
+   static String formatoMoneda (double n){
+    return  NumberFormat('#,##0.00', 'es_CR').format(n);
+   }
 }

@@ -195,31 +195,35 @@ class VentasView extends StatelessWidget {
                       children: [
                         Expanded(
                           flex: 1,
-                          child: totalVenta(title: 'Total facturado', total: 47242384, symbol: 'c')
+                          child: totalVenta(title: 'Total facturado', total: model.facturado, symbol: 'c')
                         ),
                         Expanded(
                           flex: 1,
-                          child: totalVenta(title: 'IVA', total: 616512, symbol: 'c')
+                          child: totalVenta(title: 'IVA', total: model.iva, symbol: 'c')
                         ),
                         Expanded(
                           flex: 1,
-                          child: totalVenta(title: 'Colones', total: 4177997, symbol: 'c')
+                          child: totalVenta(title: 'Colones', total: model.colones, symbol: 'c')
                         ),
                         Expanded(
                           flex: 1,
-                          child: totalVenta(title: 'Dolares', total: 1120, symbol: 'd')
+                          child: totalVenta(title: 'Dolares', total: model.dolares, symbol: 'd')
                         ),
                         Expanded(
                           flex: 1,
-                          child: totalVenta(title: 'Descuento', total: 68062, symbol: 'c')
+                          child: totalVenta(title: 'Descuento', total: model.descuento, symbol: 'c')
                         ),
                         Expanded(
                           flex: 1,
-                          child: totalVenta(title: 'Credito', total: 394787, symbol: 'c')
+                          child: totalVenta(title: 'Credito', total: model.credito, symbol: 'c')
                         ),
                         Expanded(
                           flex: 1,
-                          child: totalVenta(title: 'Sinpe Movil', total: 35564, symbol: 'c')
+                          child: totalVenta(title: 'Sinpe Movil', total: model.sinpe, symbol: 'c')
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: totalVenta(title: 'NC', total: model.notasCredito, symbol: 'c')
                         ),
                       ],
                     ),
@@ -242,7 +246,7 @@ class VentasView extends StatelessWidget {
                                   flex: 3,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(model.ventas[index].compania?.razonComercial ?? ''),
+                                    child: Text('${model.ventas[index].compania?.razonComercial ?? ''} \n ${model.ventas[index].compania?.razonSocial ?? ''}' ),
                                   )
                                 ),
                                 Expanded(
@@ -294,12 +298,21 @@ class VentasView extends StatelessWidget {
                                     child: Text(formatoMoneda.format(model.ventas[index].sinpe)),
                                   )
                                 ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(formatoMoneda.format(model.ventas[index].notasCredito)),
+                                  )
+                                ),
                               ],
                             ),
                           );
                         }
-                      )
+                      ),
                     ),
+                    Divider(),
+                    GranTotal(model: model,)
                   ],
                 ),
               ),
@@ -382,8 +395,98 @@ class Encabezado extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
+          Expanded(
+            flex: 1,
+            child: Text(
+              'NC',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
         ],
       ),
+    );
+  }
+}
+class GranTotal extends StatelessWidget {
+  const GranTotal({
+    super.key,
+    required this.model
+  });
+
+  final Ventasviewmodel model;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Row(
+      children: [
+        Expanded(
+          flex: 3,
+          child: Padding(
+            padding: EdgeInsets.only(left: 8),
+            child: Text(
+              'Gran total',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Text(
+            Helper.formatoMoneda(model.facturado),
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Text(
+            Helper.formatoMoneda(model.iva),
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Text(
+            Helper.formatoMoneda(model.colones),
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Text(
+            Helper.formatoMoneda(model.dolares),
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Text(
+            Helper.formatoMoneda(model.descuento),
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Text(
+            Helper.formatoMoneda(model.credito),
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Text(
+            Helper.formatoMoneda(model.sinpe),
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Text(
+            Helper.formatoMoneda(model.notasCredito),
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
     );
   }
 }

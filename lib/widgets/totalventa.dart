@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 Widget totalVenta({
   required String title,
-  required double total,
+  double? total,
   required String symbol /*symbol only c or d c=colons and d= dollars*/
 }){
   final formatoMoneda = NumberFormat('#,##0.00', 'es_CR');
@@ -16,7 +16,7 @@ Widget totalVenta({
         children: [
           Text(title),
           Text(
-            '${symbol=='c' ? '¢':symbol=='d' ? '\$' : ''}${formatoMoneda.format(total)}',
+            '${symbol=='c' ? '¢':symbol=='d' ? '\$' : ''}${formatoMoneda.format(total??0)}',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16
