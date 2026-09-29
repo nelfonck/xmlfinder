@@ -43,6 +43,8 @@ class VentasView extends StatelessWidget {
                         await model.getVentas();
                       } catch (e) {
                         if (context.mounted){
+                          model.isLoading = false;
+                          model.safeNotifyListeners();
                           Mensajes.error(context, e.toString());
                         }
                       }
@@ -229,6 +231,8 @@ class VentasView extends StatelessWidget {
                     ),
                     SizedBox(height: 20,),
                     Encabezado(),
+                    model.isLoading ? 
+                    LoadingWidget() :
                     Expanded(
                       child: ListView.builder(
                         itemCount: model.ventas.length,
@@ -246,7 +250,7 @@ class VentasView extends StatelessWidget {
                                   flex: 3,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text('${model.ventas[index].compania?.razonComercial ?? ''} \n ${model.ventas[index].compania?.razonSocial ?? ''}' ),
+                                    child: Text('${model.ventas[index].compania?.razonComercial ?? ''} \n${model.ventas[index].compania?.razonSocial ?? ''}' ),
                                   )
                                 ),
                                 Expanded(
@@ -311,6 +315,7 @@ class VentasView extends StatelessWidget {
                         }
                       ),
                     ),
+                    Visibility(visible: model.isLoading, child: LinearProgressIndicator()),
                     Divider(),
                     GranTotal(model: model,)
                   ],
@@ -324,6 +329,26 @@ class VentasView extends StatelessWidget {
   }
 }
 
+class LoadingWidget extends StatelessWidget {
+  const LoadingWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 15,),
+          Text('Obteniendo datos...')
+        ],
+      )
+      );
+  }
+}
+
 class Encabezado extends StatelessWidget {
   const Encabezado({
     super.key,
@@ -333,7 +358,17 @@ class Encabezado extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      color: const Color.fromARGB(255, 46, 100, 235),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color.fromARGB(255, 100, 150, 255),
+            Color.fromARGB(255, 46, 100, 235),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+      ),
       child: const Row(
         children: [
           Expanded(

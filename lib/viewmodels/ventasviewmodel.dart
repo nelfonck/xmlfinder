@@ -15,6 +15,7 @@ class Ventasviewmodel extends ChangeNotifier{
   List<Ventas> ventas = [];
   List<Tienda> tiendas = [];
   bool _disposed = false;
+  bool isLoading = false;
 
   //TOTALES
   double facturado = 0;
@@ -33,6 +34,8 @@ class Ventasviewmodel extends ChangeNotifier{
     safeNotifyListeners();
   }
   Future<void> getVentas()async{
+    isLoading = true;
+    safeNotifyListeners();
 
     final result = await _repository.getVentas(desde,hasta);
 
@@ -40,6 +43,9 @@ class Ventasviewmodel extends ChangeNotifier{
       ventas = result['data'].map<Ventas>((e) => Ventas.fromJson(e)).toList(); 
       sumarTotales();
     }
+
+    isLoading = false;
+    safeNotifyListeners();
   }
 
   void sumarTotales(){
