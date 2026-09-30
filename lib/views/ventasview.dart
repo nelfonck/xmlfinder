@@ -1,6 +1,6 @@
 import 'package:comprassj/helpers/helper.dart';
 import 'package:comprassj/helpers/mensajes.dart';
-import 'package:comprassj/models/tienda.dart';
+import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/viewmodels/ventasviewmodel.dart';
 import 'package:comprassj/widgets/fondodegradado.dart';
 import 'package:comprassj/widgets/modelready.dart';
@@ -14,7 +14,7 @@ class VentasView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formatoMoneda = NumberFormat('#,##0.00', 'es_CR');
+    final formatoMoneda = NumberFormat('#,##0.##', 'es_CR');
     final dateFormat = DateFormat('dd/MM/yyyy');
     
     return ChangeNotifierProvider(
@@ -22,7 +22,7 @@ class VentasView extends StatelessWidget {
       child: ModelReady<Ventasviewmodel>(
         onModelReady: (Ventasviewmodel model) async{
           try {
-            await model.getTiendas();
+            await model.getRazonesSociales();
           } catch (e) {
             if (context.mounted){
               Mensajes.error(context, e.toString());
@@ -49,7 +49,7 @@ class VentasView extends StatelessWidget {
                         }
                       }
                     }, 
-                    icon: Icon(Icons.report)
+                    icon: Icon(Icons.refresh)
                   )
                 ],
               ),
@@ -60,10 +60,10 @@ class VentasView extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          flex: 2,
-                          child: DropdownButtonFormField<Tienda>(
+                          flex: 5,
+                          child: DropdownButtonFormField<RazonSocial>(
                             decoration: InputDecoration(
-                              labelText: 'Local',
+                              labelText: 'Razon social',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -74,11 +74,12 @@ class VentasView extends StatelessWidget {
                             ),
                                           
                             hint: const Text(
-                              'Seleccione un local',
+                              'Seleccione una razon social',
                               overflow: TextOverflow.ellipsis,
                             ),
-                            items: model.tiendas.map((tienda) {
-                              return DropdownMenuItem<Tienda>(
+                            initialValue: model.selectedRs,
+                            items: model.rs.map((tienda) {
+                              return DropdownMenuItem<RazonSocial>(
                                 value: tienda,
                                 child: Text(
                                   tienda.nombre,
@@ -87,13 +88,13 @@ class VentasView extends StatelessWidget {
                               );
                             }).toList(), 
                             onChanged: (value){
-                              
+                              model.selectedRs = value;
                             }
                           ),
                         ),
                         SizedBox(width: 5,),
                         Expanded(
-                          flex: 1,
+                          flex: 3,
                           child: InkWell(
                             onTap: () async {
                               DateTime? fecha =
@@ -142,7 +143,7 @@ class VentasView extends StatelessWidget {
                         ),
                         SizedBox(width: 5,),
                         Expanded(
-                          flex: 1,
+                          flex: 3,
                           child: InkWell(
                             onTap: () async {
                               DateTime? fecha =
@@ -189,6 +190,36 @@ class VentasView extends StatelessWidget {
                             ),
                           ),
                         ),
+                        SizedBox(width: 10,),
+                        Expanded(
+                          flex: 1,
+                          child: IconButton(
+                            onPressed: ()async{
+                              try {
+                                await model.getVentas();
+                              } catch (e) {
+                                if (context.mounted){
+                                  model.isLoading = false;
+                                  model.safeNotifyListeners();
+                                  Mensajes.error(context, e.toString());
+                                }
+                              }
+                            }, 
+                            icon: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Icon(Icons.search),
+                            ),
+                            style: IconButton.styleFrom(
+                            side: const BorderSide(
+                              color: Colors.grey,
+                              width: 1,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),),
+                            
+                          )
+                        )
                       ],
                     ),
                     SizedBox(height: 25,),
@@ -226,6 +257,10 @@ class VentasView extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: totalVenta(title: 'NC', total: model.notasCredito, symbol: 'c')
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: totalVenta(title: 'Abonos', total: model.abonos, symbol: 'c')
                         ),
                       ],
                     ),
@@ -307,6 +342,13 @@ class VentasView extends StatelessWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(formatoMoneda.format(model.ventas[index].notasCredito)),
+                                  )
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(formatoMoneda.format(model.ventas[index].abonos)),
                                   )
                                 ),
                               ],
@@ -437,6 +479,13 @@ class Encabezado extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
+          Expanded(
+            flex: 1,
+            child: Text(
+              'Abonos',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
         ],
       ),
     );
@@ -518,6 +567,13 @@ class GranTotal extends StatelessWidget {
           flex: 1,
           child: Text(
             Helper.formatoMoneda(model.notasCredito),
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Text(
+            Helper.formatoMoneda(model.abonos),
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),

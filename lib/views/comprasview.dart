@@ -56,13 +56,6 @@ class ComprasView extends StatelessWidget {
                     },
                   ),
                   menuButton(
-                    icon: Icons.store, 
-                    text: 'Tiendas', 
-                    onPressed: () {
-                      Navigator.pushNamed(context, 'nueva_tienda');
-                    },
-                  ),
-                  menuButton(
                     icon: Icons.business, 
                     text: 'Razones Sociales', 
                     onPressed: () {

@@ -21,6 +21,7 @@ class Ventas {
     double? sinpe;
     double? mixto;
     double? notasCredito;
+    double? abonos;
 
     Ventas({
         this.compania,
@@ -33,7 +34,8 @@ class Ventas {
         this.tarjeta,
         this.sinpe,
         this.mixto,
-        this.notasCredito
+        this.notasCredito,
+        this.abonos
     });
 
     Ventas copyWith({
@@ -47,7 +49,8 @@ class Ventas {
         double? tarjeta,
         double? sinpe,
         double? mixto,
-        double? notasCredito
+        double? notasCredito,
+        double? abonos
     }) => 
         Ventas(
             compania: compania ?? this.compania,
@@ -61,6 +64,7 @@ class Ventas {
             sinpe: sinpe ?? this.sinpe,
             mixto: mixto ?? this.mixto,
             notasCredito: notasCredito ?? this.notasCredito,
+            abonos: abonos ?? this.abonos
         );
 
     factory Ventas.fromJson(Map<String, dynamic> json) => Ventas(
@@ -75,6 +79,7 @@ class Ventas {
         sinpe: json["sinpe"]?.toDouble(),
         mixto: json["mixto"]?.toDouble(),
         notasCredito: json["notas_credito"]?.toDouble(),
+        abonos: json["abonos"]?.toDouble(),
     );
 
     Map<String, dynamic> toJson() => {
@@ -89,6 +94,7 @@ class Ventas {
         "sinpe": sinpe,
         "mixto": mixto,
         "notas_credito": notasCredito,
+        "abonos": abonos,
     };
 }
 

@@ -65,19 +65,16 @@ class CompraService {
         headers: Preferencias.headers
       );
 
-
-      final body = jsonDecode(resp.body);
+      final data = jsonDecode(resp.body);
 
       if (resp.statusCode != 200) {
-        throw Exception(
-          body['message'],
-        );
+        throw Exception(data['message'] ?? 'Error al consultar las compras');
       }
 
-      return body;
+      return data;
 
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 

@@ -35,6 +35,6 @@ class Helper {
   }
 
    static String formatoMoneda (double n){
-    return  NumberFormat('#,##0.00', 'es_CR').format(n);
+    return  NumberFormat('#,##0.##', 'es_CR').format(n);
    }
 }
