@@ -3,7 +3,9 @@ import 'package:comprassj/views/comprasview.dart';
 import 'package:comprassj/views/configuracionview.dart';
 import 'package:comprassj/views/nuevatiendaview.dart';
 import 'package:comprassj/views/nuevoproveedorview.dart';
+import 'package:comprassj/views/ventasview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,8 +59,9 @@ class MyApp extends StatelessWidget {
         'nueva_tienda': (context) => const NuevaTiendaView(),
         'nuevo_proveedor': (context) => const NuevoProveedorView(),
         'compras': (context) => const ComprasView(),
+        'ventas': (context) => const VentasView(),
       },
-      home: const ComprasView(),
+      initialRoute: kIsWeb ? 'ventas' : 'compras',
     );
   }
 }
