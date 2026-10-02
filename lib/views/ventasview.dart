@@ -228,7 +228,7 @@ class VentasView extends StatelessWidget {
                       children: [
                         Expanded(
                           flex: 1,
-                          child: totalVenta(title: 'Total facturado', total: model.facturado, symbol: 'c')
+                          child: totalVenta(title: 'Facturado', total: model.facturado, symbol: 'c')
                         ),
                         Expanded(
                           flex: 1,
@@ -271,94 +271,67 @@ class VentasView extends StatelessWidget {
                     Expanded(
                       child: ListView.builder(
                         itemCount: model.ventas.length,
-                        itemBuilder: (context,index){
+                        itemBuilder: (context, index) {
+                          final venta = model.ventas[index];
 
-                        final colorFila = index.isEven
-                            ? const Color.fromARGB(255, 90, 90, 90)
-                            : Colors.grey.shade700 ;
+                          final colorFila = index.isEven
+                              ? const Color.fromARGB(255, 90, 90, 90)
+                              : Colors.grey.shade700;
+
+                          Widget monto(double valor) {
+                            return Expanded(
+                              flex: 1,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    formatoMoneda.format(valor),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
 
                           return Container(
+                            margin: EdgeInsets.only(bottom: 2),
                             color: colorFila,
                             child: Row(
                               children: [
                                 Expanded(
                                   flex: 3,
                                   child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text('${model.ventas[index].compania?.razonComercial ?? ''} \n${model.ventas[index].compania?.razonSocial ?? ''}' ),
-                                  )
+                                    padding: const EdgeInsets.only(
+                                      left: 8,
+                                      right: 6,
+                                      top: 4,
+                                      bottom: 4,
+                                    ),
+                                    child: Text(
+                                      '${venta.compania?.razonComercial ?? ''}\n'
+                                      '${venta.compania?.razonSocial ?? ''}',
+                                    ),
+                                  ),
                                 ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(formatoMoneda.format(model.ventas[index].facturado)),
-                                  )
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(formatoMoneda.format(model.ventas[index].iva)),
-                                  )
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(formatoMoneda.format(model.ventas[index].colones)),
-                                  )
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(formatoMoneda.format(model.ventas[index].dolares)),
-                                  )
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(formatoMoneda.format(model.ventas[index].descuento)),
-                                  )
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(formatoMoneda.format(model.ventas[index].credito)),
-                                  )
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(formatoMoneda.format(model.ventas[index].sinpe)),
-                                  )
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(formatoMoneda.format(model.ventas[index].notasCredito)),
-                                  )
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(formatoMoneda.format(model.ventas[index].abonos)),
-                                  )
-                                ),
+
+                                monto(venta.facturado ?? 0),
+                                monto(venta.iva ?? 0),
+                                monto(venta.colones ?? 0),
+                                monto(venta.dolares ?? 0),
+                                monto(venta.descuento ?? 0),
+                                monto(venta.credito ?? 0),
+                                monto(venta.sinpe ?? 0),
+                                monto(venta.notasCredito ?? 0),
+                                monto(venta.abonos ?? 0),
                               ],
                             ),
                           );
-                        }
+                        },
                       ),
                     ),
                     Visibility(visible: model.isLoading, child: LinearProgressIndicator()),
-                    Divider(),
+                    Divider(color: const Color.fromARGB(255, 33, 243, 219),),
                     GranTotal(model: model,)
                   ],
                 ),
@@ -392,9 +365,23 @@ class LoadingWidget extends StatelessWidget {
 }
 
 class Encabezado extends StatelessWidget {
-  const Encabezado({
-    super.key,
-  });
+  const Encabezado({super.key});
+
+  Widget titulo(String texto) {
+    return Expanded(
+      flex: 1,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        child: Text(
+          textAlign: TextAlign.center,
+          texto,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -409,174 +396,93 @@ class Encabezado extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
       ),
-      child: const Row(
+      child: Row(
         children: [
           Expanded(
             flex: 3,
             child: Padding(
-              padding: EdgeInsets.only(left: 8),
-              child: Text(
+              padding: const EdgeInsets.only(left: 8),
+              child: const Text(
                 'Comercio',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              'Facturado',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              'IVA',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              'Colones',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              'Dolares',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              'Descuento',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              'Credito',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              'Sinpe Movil',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              'NC',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text(
-              'Abonos',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
+
+          titulo('Facturado'),
+          titulo('IVA'),
+          titulo('Colones'),
+          titulo('Dolares'),
+          titulo('Descuento'),
+          titulo('Credito'),
+          titulo('Sinpe Movil'),
+          titulo('NC'),
+          titulo('Abonos'),
         ],
       ),
     );
   }
 }
+
 class GranTotal extends StatelessWidget {
   const GranTotal({
     super.key,
-    required this.model
+    required this.model,
   });
 
   final Ventasviewmodel model;
 
+  Widget monto(double valor) {
+    return Expanded(
+      flex: 1,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerRight,
+          child: Text(
+            Helper.formatoMoneda(valor),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Row(
       children: [
         Expanded(
           flex: 3,
           child: Padding(
-            padding: EdgeInsets.only(left: 8),
+            padding: const EdgeInsets.only(left: 8),
             child: Text(
               'Gran total',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
-        Expanded(
-          flex: 1,
-          child: Text(
-            Helper.formatoMoneda(model.facturado),
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Text(
-            Helper.formatoMoneda(model.iva),
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Text(
-            Helper.formatoMoneda(model.colones),
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Text(
-            Helper.formatoMoneda(model.dolares),
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Text(
-            Helper.formatoMoneda(model.descuento),
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Text(
-            Helper.formatoMoneda(model.credito),
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Text(
-            Helper.formatoMoneda(model.sinpe),
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Text(
-            Helper.formatoMoneda(model.notasCredito),
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Text(
-            Helper.formatoMoneda(model.abonos),
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
+
+        monto(model.facturado),
+        monto(model.iva),
+        monto(model.colones),
+        monto(model.dolares),
+        monto(model.descuento),
+        monto(model.credito),
+        monto(model.sinpe),
+        monto(model.notasCredito),
+        monto(model.abonos),
       ],
     );
   }

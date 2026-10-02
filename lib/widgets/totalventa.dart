@@ -15,11 +15,15 @@ Widget totalVenta({
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(title),
-          Text(
-            '${symbol=='c' ? '¢':symbol=='d' ? '\$' : ''}${formatoMoneda.format(total??0)}',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '${symbol=='c' ? '¢':symbol=='d' ? '\$' : ''}${formatoMoneda.format(total??0)}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16
+              ),
             ),
           )
         ],

@@ -47,6 +47,8 @@ class Ventasviewmodel extends ChangeNotifier{
       final result = await _repository.getVentas(desde,hasta, selectedRs!);
       if (result['statusCode']==200){
         ventas = result['data'].map<Ventas>((e) => Ventas.fromJson(e)).toList(); 
+        //Agrupar por numero de identificacion
+        ventas.sort((a,b) => a.compania!.identificacion!.compareTo(b.compania!.identificacion!));
         sumarTotales();
       }
 
