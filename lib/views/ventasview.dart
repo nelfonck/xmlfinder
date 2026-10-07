@@ -230,19 +230,15 @@ class VentasView extends StatelessWidget {
                       children: [
                         Expanded(
                           flex: 1,
-                          child: totalVenta(title: 'Facturado', total: model.facturado, symbol: 'c')
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: totalVenta(title: 'IVA', total: model.iva, symbol: 'c')
-                        ),
-                        Expanded(
-                          flex: 1,
                           child: totalVenta(title: 'Colones', total: model.colones, symbol: 'c')
                         ),
                         Expanded(
                           flex: 1,
                           child: totalVenta(title: 'Dolares', total: model.dolares, symbol: 'd')
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: totalVenta(title: 'IVA', total: model.iva, symbol: 'c')
                         ),
                         Expanded(
                           flex: 1,
@@ -258,11 +254,15 @@ class VentasView extends StatelessWidget {
                         ),
                         Expanded(
                           flex: 1,
-                          child: totalVenta(title: 'NC', total: model.notasCredito, symbol: 'c')
+                          child: totalVenta(title: 'Abonos', total: model.abonos, symbol: 'c')
                         ),
                         Expanded(
                           flex: 1,
-                          child: totalVenta(title: 'Abonos', total: model.abonos, symbol: 'c')
+                          child: totalVenta(title: 'NC', total: 0-model.notasCredito, symbol: 'c')
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: totalVenta(title: 'Facturado', total: model.facturado, symbol: 'c')
                         ),
                       ],
                     ),
@@ -317,15 +317,15 @@ class VentasView extends StatelessWidget {
                                   ),
                                 ),
 
-                                monto(venta.facturado ?? 0),
-                                monto(venta.iva ?? 0),
                                 monto(venta.colones ?? 0),
                                 monto(venta.dolares ?? 0),
+                                monto(venta.iva ?? 0),
                                 monto(venta.descuento ?? 0),
                                 monto(venta.credito ?? 0),
                                 monto(venta.sinpe ?? 0),
-                                monto(venta.notasCredito ?? 0),
                                 monto(venta.abonos ?? 0),
+                                monto(0-(venta.notasCredito ?? 0)),
+                                monto(venta.facturado ?? 0),
                               ],
                             ),
                           );
@@ -416,15 +416,15 @@ class Encabezado extends StatelessWidget {
             ),
           ),
 
-          titulo('Facturado'),
-          titulo('IVA'),
           titulo('Colones'),
           titulo('Dolares'),
+          titulo('IVA'),
           titulo('Descuento'),
           titulo('Credito'),
           titulo('Sinpe Movil'),
-          titulo('NC'),
           titulo('Abonos'),
+          titulo('NC'),
+          titulo('Facturado'),
         ],
       ),
     );
@@ -476,15 +476,15 @@ class GranTotal extends StatelessWidget {
           ),
         ),
 
-        monto(model.facturado),
-        monto(model.iva),
         monto(model.colones),
         monto(model.dolares),
+        monto(model.iva),
         monto(model.descuento),
         monto(model.credito),
         monto(model.sinpe),
-        monto(model.notasCredito),
         monto(model.abonos),
+        monto(0-model.notasCredito),
+        monto(model.facturado),
       ],
     );
   }

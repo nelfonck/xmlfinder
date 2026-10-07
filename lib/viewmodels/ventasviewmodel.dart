@@ -49,6 +49,7 @@ class Ventasviewmodel extends ChangeNotifier{
         ventas = result['data'].map<Ventas>((e) => Ventas.fromJson(e)).toList(); 
         //Agrupar por numero de identificacion
         ventas.sort((a,b) => a.compania!.identificacion!.compareTo(b.compania!.identificacion!));
+        restarNotas();
         sumarTotales();
       }
 
@@ -56,6 +57,12 @@ class Ventasviewmodel extends ChangeNotifier{
       safeNotifyListeners();
     }else{
       throw 'Debe seleccionar una tienda';
+    }
+  }
+
+  void restarNotas(){
+    for (int x=0; x<= ventas.length-1; x++){
+      ventas[x].facturado = (ventas[x].facturado ?? 0) - (ventas[x].notasCredito ?? 0);
     }
   }
 
