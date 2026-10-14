@@ -16,7 +16,7 @@ class VentasView extends StatelessWidget {
   Widget build(BuildContext context) {
     final formatoMoneda = NumberFormat('#,##0.##', 'es_CR');
     final dateFormat = DateFormat('dd/MM/yyyy');
-    
+  
     return ChangeNotifierProvider(
       create: (_) => Ventasviewmodel(),
       child: ModelReady<Ventasviewmodel>(
@@ -276,9 +276,11 @@ class VentasView extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final venta = model.ventas[index];
 
-                          final colorFila = index.isEven
-                              ? const Color.fromARGB(255, 90, 90, 90)
-                              : Colors.grey.shade700;
+                          final colorFila = index == model.filaSeleccionada
+                          ? const Color.fromARGB(255, 0, 165, 55)
+                          : index.isEven
+                          ? const Color.fromARGB(255, 90, 90, 90)
+                          : Colors.grey.shade700;
 
                           Widget monto(double valor) {
                             return Expanded(
@@ -296,37 +298,45 @@ class VentasView extends StatelessWidget {
                             );
                           }
 
-                          return Container(
-                            margin: EdgeInsets.only(bottom: 2),
-                            color: colorFila,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8,
-                                      right: 6,
-                                      top: 4,
-                                      bottom: 4,
-                                    ),
-                                    child: Text(
-                                      '${venta.compania?.razonComercial ?? ''}\n'
-                                      '${venta.compania?.razonSocial ?? ''}',
+                          return InkWell(
+                            onTap: (){
+                              model.setFilaSeleccionada(index);
+                            },
+                            onDoubleTap: () {
+                              model.setFilaSeleccionada(-1);
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(bottom: 2),
+                              color: colorFila,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 8,
+                                        right: 6,
+                                        top: 4,
+                                        bottom: 4,
+                                      ),
+                                      child: Text(
+                                        '${venta.compania?.razonComercial ?? ''}\n'
+                                        '${venta.compania?.razonSocial ?? ''}',
+                                      ),
                                     ),
                                   ),
-                                ),
-
-                                monto(venta.colones ?? 0),
-                                monto(venta.dolares ?? 0),
-                                monto(venta.iva ?? 0),
-                                monto(venta.descuento ?? 0),
-                                monto(venta.credito ?? 0),
-                                monto(venta.sinpe ?? 0),
-                                monto(venta.abonos ?? 0),
-                                monto(0-(venta.notasCredito ?? 0)),
-                                monto(venta.facturado ?? 0),
-                              ],
+                            
+                                  monto(venta.colones ?? 0),
+                                  monto(venta.dolares ?? 0),
+                                  monto(venta.iva ?? 0),
+                                  monto(venta.descuento ?? 0),
+                                  monto(venta.credito ?? 0),
+                                  monto(venta.sinpe ?? 0),
+                                  monto(venta.abonos ?? 0),
+                                  monto(0-(venta.notasCredito ?? 0)),
+                                  monto(venta.facturado ?? 0),
+                                ],
+                              ),
                             ),
                           );
                         },

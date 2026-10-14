@@ -29,6 +29,7 @@ class Ventasviewmodel extends ChangeNotifier{
   double mixto = 0;
   double notasCredito = 0;
   double abonos = 0;
+  int? filaSeleccionada;
 
   Future<void> getRazonesSociales()async{
     rs.clear();
@@ -36,6 +37,11 @@ class Ventasviewmodel extends ChangeNotifier{
     //INSERTAR UNA TIENDA VACIA CON EL NOMBRE DE TODAS INDEX -1
     selectedRs = RazonSocial(id: -1, identificacion: '6666', tipoIdentificacion: '666', nombre: 'TODO', nombreComercial: 'nombreComercial', correo: 'correo', telefono: 'telefono', activo: false, fechaRegistro: DateTime.now(),claveCorreo: '');
     rs.insert(0, selectedRs! );
+    safeNotifyListeners();
+  }
+
+  void setFilaSeleccionada(int index){
+    filaSeleccionada = index;
     safeNotifyListeners();
   }
 
@@ -49,7 +55,6 @@ class Ventasviewmodel extends ChangeNotifier{
         ventas = result['data'].map<Ventas>((e) => Ventas.fromJson(e)).toList(); 
         //Agrupar por numero de identificacion
         ventas.sort((a,b) => a.compania!.identificacion!.compareTo(b.compania!.identificacion!));
-        restarNotas();
         sumarTotales();
       }
 
@@ -60,11 +65,7 @@ class Ventasviewmodel extends ChangeNotifier{
     }
   }
 
-  void restarNotas(){
-    for (int x=0; x<= ventas.length-1; x++){
-      ventas[x].facturado = (ventas[x].facturado ?? 0) - (ventas[x].notasCredito ?? 0);
-    }
-  }
+
 
   void sumarTotales(){
     totalesEnCero();
