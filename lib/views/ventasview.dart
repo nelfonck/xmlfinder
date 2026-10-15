@@ -100,7 +100,7 @@ class VentasView extends StatelessWidget {
                           child: InkWell(
                             onTap: () async {
                               DateTime? fecha =
-                                  await Helper.pickupDesdeDate(context);
+                                  await Helper.pickupDesdeDate(context,model.desde);
                         
                               if (fecha != null) {
                                 model.desde = fecha;
@@ -149,7 +149,7 @@ class VentasView extends StatelessWidget {
                           child: InkWell(
                             onTap: () async {
                               DateTime? fecha =
-                                  await Helper.pickupHastaDate(context);
+                                  await Helper.pickupHastaDate(context, model.hasta);
                         
                               if (fecha != null) {
                                 model.hasta = fecha;
@@ -300,10 +300,7 @@ class VentasView extends StatelessWidget {
 
                           return InkWell(
                             onTap: (){
-                              model.setFilaSeleccionada(index);
-                            },
-                            onDoubleTap: () {
-                              model.setFilaSeleccionada(-1);
+                              model.setFilaSeleccionada(model.filaSeleccionada == index ? -1 : index);
                             },
                             child: Container(
                               margin: EdgeInsets.only(bottom: 2),

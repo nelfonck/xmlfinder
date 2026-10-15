@@ -18,6 +18,8 @@ import 'package:provider/provider.dart';
 class ComprasView extends StatelessWidget {
   const ComprasView({super.key});
 
+
+
   @override
   Widget build(BuildContext context) {
     final formatoMoneda = NumberFormat('#,##0.00', 'es_CR');
@@ -30,11 +32,14 @@ class ComprasView extends StatelessWidget {
           if (!Helper.configuracionLista()){
             await Navigator.of(context).pushNamed('configuracion');
             if (Helper.configuracionLista()){
+
               await model.init();
+
             }
             return;
           }
           await model.init();
+          
         },
         child: Consumer<ComprasViewModel>(
           builder: (context, model, child) {
@@ -214,7 +219,7 @@ class ComprasView extends StatelessWidget {
                               child: InkWell(
                                 onTap: () async {
                                   DateTime? fecha =
-                                      await Helper.pickupDesdeDate(context);
+                                      await Helper.pickupDesdeDate(context,model.desde);
                             
                                   if (fecha != null) {
                                     model.desde = fecha;
@@ -265,7 +270,7 @@ class ComprasView extends StatelessWidget {
                               child: InkWell(
                                 onTap: () async {
                                   DateTime? fecha =
-                                      await Helper.pickupHastaDate(context);
+                                      await Helper.pickupHastaDate(context,model.hasta);
                             
                                   if (fecha != null) {
                                     model.hasta = fecha;

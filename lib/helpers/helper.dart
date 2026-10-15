@@ -4,19 +4,19 @@ import 'package:intl/intl.dart';
 
 class Helper {
 
-  static Future<DateTime?>  pickupDesdeDate(BuildContext context)async{
+  static Future<DateTime?>  pickupDesdeDate(BuildContext context, DateTime? desde)async{
     final fecha = await showDatePicker(
           context: context,
-          initialDate: DateTime(DateTime.now().year, 1, 1),
+          initialDate: desde,
           firstDate: DateTime(2020),
           lastDate: DateTime(2030),
         );
     return fecha;
   } 
-  static Future<DateTime?>  pickupHastaDate(BuildContext context)async{
+  static Future<DateTime?>  pickupHastaDate(BuildContext context, DateTime? hasta)async{
     final fecha = await showDatePicker(
           context: context,
-          initialDate: DateTime.now(),
+          initialDate: hasta,
           firstDate: DateTime(2020),
           lastDate: DateTime(2030),
         );

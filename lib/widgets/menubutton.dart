@@ -8,7 +8,7 @@ Widget menuButton({
   return InkWell(
     onTap: onPressed,
     child: SizedBox(
-      width: 90,
+      width: 100,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
