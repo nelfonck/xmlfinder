@@ -3,6 +3,7 @@ import 'package:comprassj/helpers/mensajes.dart';
 import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/viewmodels/ventasviewmodel.dart';
 import 'package:comprassj/widgets/fondodegradado.dart';
+import 'package:comprassj/widgets/guiacolumna.dart';
 import 'package:comprassj/widgets/modelready.dart';
 import 'package:comprassj/widgets/totalventa.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,7 @@ class VentasView extends StatelessWidget {
                 ],
               ),
               body: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
                 child: Column(
                   children: [
                     Row(
@@ -250,6 +251,10 @@ class VentasView extends StatelessWidget {
                         ),
                         Expanded(
                           flex: 1,
+                          child: totalVenta(title: 'Tarjeta', total: model.tarjeta, symbol: 'c')
+                        ),
+                        Expanded(
+                          flex: 1,
                           child: totalVenta(title: 'Sinpe Movil', total: model.sinpe, symbol: 'c')
                         ),
                         Expanded(
@@ -271,76 +276,111 @@ class VentasView extends StatelessWidget {
                     model.isLoading ? 
                     LoadingWidget() :
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: model.ventas.length,
-                        itemBuilder: (context, index) {
-                          final venta = model.ventas[index];
-
-                          final colorFila = index == model.filaSeleccionada
-                          ? const Color.fromARGB(255, 0, 165, 55)
-                          : index.isEven
-                          ? const Color.fromARGB(255, 90, 90, 90)
-                          : Colors.grey.shade700;
-
-                          Widget monto(double valor) {
-                            return Expanded(
-                              flex: 1,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    formatoMoneda.format(valor),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                        IgnorePointer(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              guiaColumna(flex: 3), // Comercio
+                              guiaColumna(),        // Colones
+                              guiaColumna(),        // Dólares
+                              guiaColumna(),        // IVA
+                              guiaColumna(),        // Descuento
+                              guiaColumna(),        // Crédito
+                              guiaColumna(),        // Tarjeta
+                              guiaColumna(),        // Sinpe Móvil
+                              guiaColumna(),        // Abonos
+                              guiaColumna(),        // NC
+                              guiaColumna(),        // Facturado
+                            ],
+                          ),
+                         ),
+                         ListView.builder(
+                          itemCount: model.ventas.length,
+                          itemBuilder: (context, index) {
+                            final venta = model.ventas[index];
+                        
+                            final colorFila = index == model.filaSeleccionada
+                            ? const Color.fromARGB(255, 0, 165, 55)
+                            : index.isEven
+                            ? const Color.fromARGB(255, 90, 90, 90)
+                            : Colors.grey.shade700;
+                        
+                            Widget monto(double valor) {
+                              return Expanded(
+                                flex: 1,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    border: Border(right: BorderSide(color: Colors.grey))
+                                  ),
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      formatoMoneda.format(valor),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                        
+                            return InkWell(
+                              onTap: (){
+                                model.setFilaSeleccionada(model.filaSeleccionada == index ? -1 : index);
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(bottom: 1),
+                                color: colorFila,
+                                child: IntrinsicHeight(
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border(right: BorderSide(color: Colors.grey))
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 8,
+                                              right: 6,
+                                              top: 4,
+                                              bottom: 4,
+                                            ),
+                                            child: Text(
+                                              '${venta.compania?.razonComercial ?? ''}\n'
+                                              '${venta.compania?.razonSocial ?? ''}',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                                                
+                                      monto(venta.colones ?? 0),
+                                      monto(venta.dolares ?? 0),
+                                      monto(venta.iva ?? 0),
+                                      monto(venta.descuento ?? 0),
+                                      monto(venta.credito ?? 0),
+                                      monto(venta.tarjeta ?? 0),
+                                      monto(venta.sinpe ?? 0),
+                                      monto(venta.abonos ?? 0),
+                                      monto(0-(venta.notasCredito ?? 0)),
+                                      monto(venta.facturado ?? 0),
+                                    ],
                                   ),
                                 ),
                               ),
                             );
-                          }
-
-                          return InkWell(
-                            onTap: (){
-                              model.setFilaSeleccionada(model.filaSeleccionada == index ? -1 : index);
-                            },
-                            child: Container(
-                              margin: EdgeInsets.only(bottom: 2),
-                              color: colorFila,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 8,
-                                        right: 6,
-                                        top: 4,
-                                        bottom: 4,
-                                      ),
-                                      child: Text(
-                                        '${venta.compania?.razonComercial ?? ''}\n'
-                                        '${venta.compania?.razonSocial ?? ''}',
-                                      ),
-                                    ),
-                                  ),
-                            
-                                  monto(venta.colones ?? 0),
-                                  monto(venta.dolares ?? 0),
-                                  monto(venta.iva ?? 0),
-                                  monto(venta.descuento ?? 0),
-                                  monto(venta.credito ?? 0),
-                                  monto(venta.sinpe ?? 0),
-                                  monto(venta.abonos ?? 0),
-                                  monto(0-(venta.notasCredito ?? 0)),
-                                  monto(venta.facturado ?? 0),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
+                          },
+                        ),
+                        ],
                       ),
                     ),
                     Visibility(visible: model.isLoading, child: LinearProgressIndicator()),
-                    Divider(color: const Color.fromARGB(255, 33, 243, 219),),
+                    Divider(color: Colors.grey,height: 1,),
                     GranTotal(model: model,)
                   ],
                 ),
@@ -373,17 +413,24 @@ class LoadingWidget extends StatelessWidget {
   }
 }
 
+
 class Encabezado extends StatelessWidget {
   const Encabezado({super.key});
 
   Widget titulo(String texto) {
     return Expanded(
       flex: 1,
-      child: Padding(
+      child: Container(
+        alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 6),
+        decoration: const BoxDecoration(
+          border: Border(
+            right: BorderSide(color: Colors.grey),
+          ),
+        ),
         child: Text(
-          textAlign: TextAlign.center,
           texto,
+          textAlign: TextAlign.center,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -395,7 +442,7 @@ class Encabezado extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      clipBehavior: Clip.antiAlias,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -406,37 +453,54 @@ class Encabezado extends StatelessWidget {
           end: Alignment.bottomCenter,
         ),
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+          topLeft: Radius.circular(5),
+          topRight: Radius.circular(8),
         ),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: const Text(
-                'Comercio',
-                style: TextStyle(fontWeight: FontWeight.bold),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              flex: 3,
+              child: Container(
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                ),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    right: BorderSide(color: Colors.grey),
+                  ),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Text(
+                    'Comercio',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-
-          titulo('Colones'),
-          titulo('Dolares'),
-          titulo('IVA'),
-          titulo('Descuento'),
-          titulo('Credito'),
-          titulo('Sinpe Movil'),
-          titulo('Abonos'),
-          titulo('NC'),
-          titulo('Facturado'),
-        ],
+            titulo('Colones'),
+            titulo('Dolares'),
+            titulo('IVA'),
+            titulo('Descuento'),
+            titulo('Credito'),
+            titulo('Tarjeta'),
+            titulo('Sinpe Movil'),
+            titulo('Abonos'),
+            titulo('NC'),
+            titulo('Facturado'),
+          ],
+        ),
       ),
     );
   }
 }
+
 
 class GranTotal extends StatelessWidget {
   const GranTotal({
@@ -446,53 +510,68 @@ class GranTotal extends StatelessWidget {
 
   final Ventasviewmodel model;
 
-  Widget monto(double valor) {
-    return Expanded(
-      flex: 1,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6),
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          alignment: Alignment.centerRight,
-          child: Text(
-            Helper.formatoMoneda(valor),
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12
-            ),
+Widget monto(double valor) {
+  return Expanded(
+    flex: 1,
+    child: Container(
+      alignment: Alignment.centerRight,
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      decoration: const BoxDecoration(
+        border: Border(
+          right: BorderSide(color: Colors.grey),
+        ),
+      ),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerRight,
+        child: Text(
+          Helper.formatoMoneda(valor),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 3,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8),
-            child: Text(
-              'Gran total',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            flex: 3,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(right: BorderSide(color: Colors.grey))
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Text(
+                  'Gran total',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-
-        monto(model.colones),
-        monto(model.dolares),
-        monto(model.iva),
-        monto(model.descuento),
-        monto(model.credito),
-        monto(model.sinpe),
-        monto(model.abonos),
-        monto(0-model.notasCredito),
-        monto(model.facturado),
-      ],
+      
+          monto(model.colones),
+          monto(model.dolares),
+          monto(model.iva),
+          monto(model.descuento),
+          monto(model.credito),
+          monto(model.tarjeta),
+          monto(model.sinpe),
+          monto(model.abonos),
+          monto(0-model.notasCredito),
+          monto(model.facturado),
+        ],
+      ),
     );
   }
 }
