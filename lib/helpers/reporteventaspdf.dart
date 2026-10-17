@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:html' as html;
 
+final formato = PdfPageFormat.a4.landscape.copyWith();
 
 Future<Uint8List> crearReporteVentas(
   Ventasviewmodel model,
@@ -72,7 +73,7 @@ Future<Uint8List> crearReporteVentas(
 
   pdf.addPage(
     pw.MultiPage(
-      pageFormat: PdfPageFormat.a4.landscape,
+      pageFormat: formato,
       margin: const pw.EdgeInsets.all(10),
 
       header: (context) {
@@ -167,12 +168,12 @@ Future<Uint8List> crearReporteVentas(
             },
 
             cellPadding: const pw.EdgeInsets.symmetric(
-              horizontal: 1,
+              horizontal: 5,
               vertical: 5,
             ),
 
             headerPadding: const pw.EdgeInsets.symmetric(
-              horizontal: 1,
+              horizontal: 5,
               vertical: 7,
             ),
 
