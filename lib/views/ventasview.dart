@@ -1,5 +1,6 @@
 import 'package:comprassj/helpers/helper.dart';
 import 'package:comprassj/helpers/mensajes.dart';
+import 'package:comprassj/helpers/reporteventaspdf.dart';
 import 'package:comprassj/models/razonsocial.dart';
 import 'package:comprassj/viewmodels/ventasviewmodel.dart';
 import 'package:comprassj/widgets/fondodegradado.dart';
@@ -8,6 +9,8 @@ import 'package:comprassj/widgets/modelready.dart';
 import 'package:comprassj/widgets/totalventa.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pdf/pdf.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
 class VentasView extends StatelessWidget {
@@ -40,6 +43,29 @@ class VentasView extends StatelessWidget {
                 flexibleSpace: FondoDegradado(),
                 elevation: 0,
                 actions: [
+                  IconButton(
+                    onPressed: ()async{
+                      if (model.isLoading) return;
+
+                      if (model.ventas.isEmpty) {
+                        Mensajes.error(
+                          context,
+                          'No hay ventas para generar el reporte',
+                        );
+                        return;
+                      }
+
+                      try {
+                        final bytes = await crearReporteVentas(model);
+                        abrirPdf(bytes);
+                      } catch (e) {
+                        if (context.mounted){
+                          Mensajes.error(context, e.toString());
+                        }
+                      }
+                    }, 
+                    icon: Icon(Icons.print)
+                  ),
                   IconButton(
                     onPressed: ()async{
                       try {
