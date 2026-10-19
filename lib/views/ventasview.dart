@@ -9,8 +9,6 @@ import 'package:comprassj/widgets/modelready.dart';
 import 'package:comprassj/widgets/totalventa.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pdf/pdf.dart';
-import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
 class VentasView extends StatelessWidget {
