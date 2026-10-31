@@ -484,7 +484,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
   }
 
   Future<void> cargarTiendas() async{
-    if (!Helper.configuracionLista()){
+    if (!await Helper.configuracionLista()){
       return;
     }
     tiendas = await _repositoryTienda.getTiendas();
@@ -492,7 +492,7 @@ class Xmlfinderviewmodel extends ChangeNotifier{
   }
 
   Future<void> cargarRazonesSociales() async{
-    if (!Helper.configuracionLista()){
+    if (!await Helper.configuracionLista()){
       return;
     }
     razonesSociales = await _repositoryRazonSocial.getRazonesSociales();

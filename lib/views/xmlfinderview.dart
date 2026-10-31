@@ -31,8 +31,10 @@ class _XmlFinderViewState extends State<XmlFinderView> {
       child: ModelReady<Xmlfinderviewmodel>(
         onModelReady: (model)async{
    
-          if (!Helper.configuracionLista()){
-            Navigator.of(context).pushNamed('configuracion');
+          if (!await Helper.configuracionLista()){
+            if (context.mounted){
+              Navigator.of(context).pushNamed('configuracion');
+            }
             return;
           }
           await model.cargarTiendas().onError(((error, stackTrace) {

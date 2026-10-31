@@ -25,7 +25,7 @@ class VentasView extends StatelessWidget {
       child: ModelReady<Ventasviewmodel>(
         onModelReady: (Ventasviewmodel model) async{
           try {
-            if (Helper.configuracionLista()){
+            if (await Helper.configuracionLista()){
               await model.getRazonesSociales();
             }
           } catch (e) {

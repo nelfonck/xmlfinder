@@ -29,9 +29,9 @@ class ComprasView extends StatelessWidget {
       create: (_) => ComprasViewModel(),
       child: ModelReady<ComprasViewModel>(
         onModelReady: (ComprasViewModel model) async {
-          if (!Helper.configuracionLista()){
+          if (!await Helper.configuracionLista()){
             await Navigator.of(context).pushNamed('configuracion');
-            if (Helper.configuracionLista()){
+            if (await Helper.configuracionLista()){
 
               await model.init();
 
